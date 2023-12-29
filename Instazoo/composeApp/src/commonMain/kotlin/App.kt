@@ -1,13 +1,10 @@
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -22,9 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable 
 fun App() {
     MaterialTheme {
@@ -49,7 +44,7 @@ fun App() {
                 items(20) {
                     ImageItem("Cristiano",
                               "https://i.pinimg.com/564x/e4/be/6e/e4be6e614d9c53add1100410379c93ae.jpg",
-                              "https://i.pinimg.com/564x/e4/be/6e/e4be6e614d9c53add1100410379c93ae.jpg")
+                              "https://media.gettyimages.com/id/1325105287/photo/portugal-v-france-uefa-euro-2020-group-f.jpg?s=1024x1024&w=gi&k=20&c=QcO3g94yyTv9lf-Q4UXPsoJT5_E2tcKPtI8y0olpwLg=")
                 }
             }
         }
@@ -63,12 +58,12 @@ fun StoryItem(name: String, image: String) {
             resource = asyncPainterResource(image),
             contentDescription = "",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(50.dp).clip(CircleShape)
+            modifier = Modifier.size(60.dp).clip(CircleShape)
                 .border(
                     BorderStroke(
-                        2.dp,
-                        Brush.linearGradient(listOf(Color.Yellow, Color.Red, Color.Blue, Color.Cyan))
-                    )
+                        width = 2.dp,
+                        brush = Brush.linearGradient(listOf(Color.Yellow, Color.Red, Color.Blue, Color.Cyan))),
+                    shape = CircleShape
                 )
         )
         Text(text = name, color = Color.Black, fontSize = 12.sp)
@@ -79,7 +74,7 @@ fun StoryItem(name: String, image: String) {
 fun ImageItem(name: String, profilePic: String, postUrl: String) {
     Box(Modifier.padding(10.dp).wrapContentSize()){
         KamelImage(
-            resource = asyncPainterResource(profilePic),
+            resource = asyncPainterResource(postUrl),
             contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxWidth().aspectRatio(1.0f)
