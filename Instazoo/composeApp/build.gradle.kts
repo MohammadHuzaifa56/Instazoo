@@ -62,6 +62,10 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.tabNavigator)
+            implementation(libs.moko.mvvm.core)
+            implementation(libs.moko.mvvm.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
