@@ -1,3 +1,5 @@
+package presentation.search
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.Text

@@ -1,3 +1,5 @@
+package presentation.home
+
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -10,7 +12,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -28,7 +29,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,12 +41,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
+import data.model.FeedPost
+import data.model.StoryItem
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
 import io.kamel.image.KamelImage
@@ -55,31 +55,31 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun HomeScreen() {
-    val homeViewModel = getViewModel(Unit, viewModelFactory { HomeScreenViewModel() })
+fun HomeScreen(homeViewModel: HomeScreenViewModel = getViewModel(Unit, viewModelFactory { HomeScreenViewModel() }) ) {
     val feedPostsUIState by homeViewModel.postsUiStateFlow.collectAsState()
     val storiesUIState by homeViewModel.storyUIState.collectAsState()
-    LaunchedEffect(Unit) {
-        homeViewModel.getFeedPosts()
-        homeViewModel.getStories()
-    }
+
     LazyColumn(modifier = Modifier.fillMaxSize().padding(bottom = 20.dp))
     {
         item {
-            LazyRow(modifier = Modifier.fillMaxWidth()) {
-                items(storiesUIState.storiesList) {
-                    StoryItemView(
-                        it
-                    )
-                    Spacer(Modifier.width(14.dp))
+            storiesUIState.storiesList?.let {
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
+                    items(it) {
+                        StoryItemView(
+                            it
+                        )
+                        Spacer(Modifier.width(14.dp))
+                    }
                 }
             }
         }
 
-        items(feedPostsUIState.postsList) {item->
-            ImageItem(
-                item
-            )
+        feedPostsUIState.postsList?.let {
+            items(it) { item ->
+                ImageItem(
+                    item
+                )
+            }
         }
     }
 }
@@ -126,7 +126,7 @@ fun StoryItemView(storyItem: StoryItem) {
                 modifier = Modifier.size(60.dp).clip(CircleShape)
             )
         }
-        Text(text = storyItem.userName.orEmpty(), color = Color.Black, fontSize = 12.sp)
+        Text(text = storyItem.userName.orEmpty(), modifier = Modifier.width(70.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, color = Color.Black, fontSize = 12.sp)
     }
 }
 
@@ -146,7 +146,7 @@ fun ImageItem(postItem: FeedPost) {
                 resource = asyncPainterResource(postItem.postImage.orEmpty()),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth().aspectRatio(1.0f)
+                modifier = Modifier.fillMaxWidth().aspectRatio(0.7f)
             )
 
             Row(
