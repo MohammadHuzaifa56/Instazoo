@@ -8,18 +8,14 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 const val BASE_URL = "https://mohammadhuzaifa56.github.io/TestInstaAPI/"
 
-object InstazooAPI {
-    private val nonStrictJson = Json { isLenient = true; ignoreUnknownKeys = true }
+class InstazooAPI: KoinComponent {
 
-    private val client: HttpClient = HttpClient{
-        install(ContentNegotiation){
-            json(nonStrictJson)
-        }
-    }
-
+    private val client: HttpClient by inject()
     suspend fun fetchFeedPosts(baseUrl: String = BASE_URL, endPoint: String): List<FeedPost> =
         client.get("$baseUrl$endPoint").body<List<FeedPost>>()
 

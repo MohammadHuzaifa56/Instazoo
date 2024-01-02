@@ -20,28 +20,34 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import di.appModule
+import org.koin.compose.KoinApplication
 
 @Composable
 fun App() {
-    MaterialTheme {
-        TabNavigator(HomeTab) {
-            Scaffold(topBar = {
-                Row(modifier = Modifier.fillMaxWidth().background(Color.White).padding(12.dp)) {
-                    Text("Instazoo", fontSize = 22.sp, color = Color.Black)
+    KoinApplication(application = {
+        modules(appModule())
+    }) {
+        MaterialTheme {
+            TabNavigator(HomeTab) {
+                Scaffold(topBar = {
+                    Row(modifier = Modifier.fillMaxWidth().background(Color.White).padding(12.dp)) {
+                        Text("Instazoo", fontSize = 22.sp, color = Color.Black)
+                    }
+                }, bottomBar = {
+                    BottomNavigation(
+                        modifier = Modifier.fillMaxWidth(),
+                        backgroundColor = Color.LightGray
+                    ) {
+                        TabNavigationItem(HomeTab)
+                        TabNavigationItem(SearchTab)
+                        TabNavigationItem(AddTab)
+                        TabNavigationItem(ReelsTab)
+                        TabNavigationItem(ProfileTab)
+                    }
+                }) {
+                    CurrentTab()
                 }
-            }, bottomBar = {
-                BottomNavigation(
-                    modifier = Modifier.fillMaxWidth(),
-                    backgroundColor = Color.LightGray
-                ) {
-                    TabNavigationItem(HomeTab)
-                    TabNavigationItem(SearchTab)
-                    TabNavigationItem(AddTab)
-                    TabNavigationItem(ReelsTab)
-                    TabNavigationItem(ProfileTab)
-                }
-            }) {
-                CurrentTab()
             }
         }
     }

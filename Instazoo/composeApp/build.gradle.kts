@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -49,6 +50,7 @@ kotlin {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -66,6 +68,9 @@ kotlin {
             implementation(libs.voyager.tabNavigator)
             implementation(libs.moko.mvvm.core)
             implementation(libs.moko.mvvm.compose)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.annotation)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -106,6 +111,7 @@ android {
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
+        add("kspCommonMainMetadata", libs.koin.ksp)
     }
 }
 

@@ -53,9 +53,10 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 
 @Composable
-fun HomeScreen(homeViewModel: HomeScreenViewModel = getViewModel(Unit, viewModelFactory { HomeScreenViewModel() }) ) {
+fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val feedPostsUIState by homeViewModel.postsUiStateFlow.collectAsState()
     val storiesUIState by homeViewModel.storyUIState.collectAsState()
 

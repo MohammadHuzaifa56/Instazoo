@@ -6,11 +6,15 @@ import data.remote.InstazooAPI
 import data.remote.Resource
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.utils.io.errors.IOException
+import org.koin.core.annotation.Single
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class HomeRepositoryImpl: HomeRepository {
+class HomeRepositoryImpl: HomeRepository, KoinComponent {
+    private val api: InstazooAPI by inject()
     override suspend fun getFeedPosts(): Resource<List<FeedPost>> {
         return try {
-            val response = InstazooAPI.fetchFeedPosts(endPoint = "feedPosts.json")
+            val response = api.fetchFeedPosts(endPoint = "feedPosts.json")
             Resource.Success(response)
         } catch (e: IOException) {
             e.printStackTrace()
@@ -27,7 +31,7 @@ class HomeRepositoryImpl: HomeRepository {
 
     override suspend fun getStories(): Resource<List<StoryItem>> {
         return try {
-            val response = InstazooAPI.fetchStories(endPoint = "storyPosts.json")
+            val response = api.fetchStories(endPoint = "storyPosts.json")
             Resource.Success(response)
         } catch (e: IOException) {
             e.printStackTrace()

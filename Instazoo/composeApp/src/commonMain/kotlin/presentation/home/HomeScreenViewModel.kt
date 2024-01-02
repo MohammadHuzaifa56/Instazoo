@@ -3,6 +3,7 @@ package presentation.home
 import data.model.FeedPost
 import data.model.StoryItem
 import data.remote.Resource
+import data.repository.HomeRepository
 import data.repository.HomeRepositoryImpl
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.async
@@ -10,6 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 data class FeedPostsUIState(
     val isLoading: Boolean = false,
@@ -22,11 +25,11 @@ data class StoriesUIState(
     val storiesList: List<StoryItem>?= null,
     val error: String? = null
 )
-class HomeScreenViewModel : ViewModel() {
+
+class HomeScreenViewModel: ViewModel(), KoinComponent {
+    private val homeRepository: HomeRepository by inject()
     private val _postUiState = MutableStateFlow(FeedPostsUIState())
     val postsUiStateFlow = _postUiState.asStateFlow()
-
-    private val homeRepository = HomeRepositoryImpl()
 
     private val _storyUiState = MutableStateFlow(StoriesUIState())
     val storyUIState = _storyUiState.asStateFlow()
