@@ -13,9 +13,7 @@ import org.koin.core.component.inject
 
 const val BASE_URL = "https://mohammadhuzaifa56.github.io/TestInstaAPI/"
 
-class InstazooAPI: KoinComponent {
-
-    private val client: HttpClient by inject()
+class InstazooAPI(private val client: HttpClient) {
     suspend fun fetchFeedPosts(baseUrl: String = BASE_URL, endPoint: String): List<FeedPost> =
         client.get("$baseUrl$endPoint").body<List<FeedPost>>()
 

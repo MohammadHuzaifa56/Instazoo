@@ -16,7 +16,7 @@ fun appModule() = module {
     }
 
     single<HomeRepository> {
-        HomeRepositoryImpl()
+        HomeRepositoryImpl(get())
     }
 
     single<HttpClient> {
@@ -28,6 +28,6 @@ fun appModule() = module {
     }
 
     single{
-        InstazooAPI()
+        InstazooAPI(get())
     }
 }
