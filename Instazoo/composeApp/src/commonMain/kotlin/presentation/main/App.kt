@@ -53,7 +53,7 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
 
     BottomNavigationItem(
         selected = tabNavigator.current == tab,
-        onClick = { tabNavigator.current = tab },
+        onClick = { tabNavigator.current = tab},
         icon = {
             tab.options.icon?.let {
                 Icon(

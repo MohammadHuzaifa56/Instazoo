@@ -39,8 +39,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PointMode
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +62,9 @@ import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
@@ -153,6 +164,20 @@ fun ImageItem(postItem: FeedPost) {
                 resource = asyncPainterResource(postItem.postImage.orEmpty()),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
+                onLoading = { progress ->
+                    Box(modifier = Modifier.size(50.dp).drawWithContent {
+                        drawRoundRect(
+                            color = Color.LightGray,
+                            cornerRadius = CornerRadius(size.width, size.width),
+                            style = Stroke(width = 1.dp.toPx())
+                        )
+                        if (progress>0) {
+                            drawProgressDownloadCurve(progress = progress)
+                        }
+                        drawContent()
+                    })
+                },
+
                 modifier = Modifier.fillMaxWidth().aspectRatio(0.7f)
             )
 
@@ -207,4 +232,27 @@ fun ImageItem(postItem: FeedPost) {
             Text(text = postItem.share.toString(), fontSize = 14.sp)
         }
     }
+}
+
+fun ContentDrawScope.drawProgressDownloadCurve(progress: Float){
+    drawArc(
+        color = Color.White,
+        startAngle = -90f,
+        sweepAngle = progress,
+        useCenter = false,
+        size = Size(size.width, size.height),
+        style = Stroke(3.dp.toPx(), cap = StrokeCap.Round)
+    )
+    val center = Offset(size.width / 2f, size.height / 2f)
+    val beta = (progress - 90f) * (PI / 180f).toFloat()
+    val r = size.width / 2f
+    val a = cos(beta) * r
+    val b = sin(beta) * r
+    drawPoints(
+        listOf(Offset(center.x + a, center.y + b)),
+        pointMode = PointMode.Points,
+        color = Color.White,
+        strokeWidth = 10.dp.toPx(),
+        cap = StrokeCap.Round
+    )
 }
