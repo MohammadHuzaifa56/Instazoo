@@ -1,7 +1,6 @@
 package presentation.main
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,12 +9,9 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
@@ -30,11 +26,7 @@ fun App() {
     }) {
         MaterialTheme {
             TabNavigator(HomeTab) {
-                Scaffold(topBar = {
-                    Row(modifier = Modifier.fillMaxWidth().background(Color.White).padding(12.dp)) {
-                        Text("Instazoo", fontSize = 22.sp, color = Color.Black)
-                    }
-                }, bottomBar = {
+                Scaffold(bottomBar = {
                     BottomNavigation(
                         modifier = Modifier.fillMaxWidth(),
                         backgroundColor = Color.LightGray
@@ -46,7 +38,9 @@ fun App() {
                         TabNavigationItem(ProfileTab)
                     }
                 }) {
-                    CurrentTab()
+                    Box(Modifier.padding(it)){
+                        CurrentTab()
+                    }
                 }
             }
         }

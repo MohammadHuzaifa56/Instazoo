@@ -8,6 +8,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalTextStyle
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -47,8 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import data.model.FeedPost
 import data.model.StoryItem
-import dev.icerock.moko.mvvm.compose.getViewModel
-import dev.icerock.moko.mvvm.compose.viewModelFactory
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -60,26 +60,32 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val feedPostsUIState by homeViewModel.postsUiStateFlow.collectAsState()
     val storiesUIState by homeViewModel.storyUIState.collectAsState()
 
-    LazyColumn(modifier = Modifier.fillMaxSize().padding(bottom = 20.dp))
-    {
-        item {
-            storiesUIState.storiesList?.let {
-                LazyRow(modifier = Modifier.fillMaxWidth()) {
-                    items(it) {
-                        StoryItemView(
-                            it
-                        )
-                        Spacer(Modifier.width(14.dp))
+    Scaffold(topBar = {
+                    Row(modifier = Modifier.fillMaxWidth().background(Color.White).padding(12.dp)) {
+                        Text("Instazoo", fontSize = 22.sp, color = Color.Black)
+                    }
+    }){
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(bottom = 20.dp))
+        {
+            item {
+                storiesUIState.storiesList?.let {
+                    LazyRow(modifier = Modifier.fillMaxWidth()) {
+                        items(it) {
+                            StoryItemView(
+                                it
+                            )
+                            Spacer(Modifier.width(14.dp))
+                        }
                     }
                 }
             }
-        }
 
-        feedPostsUIState.postsList?.let {
-            items(it) { item ->
-                ImageItem(
-                    item
-                )
+            feedPostsUIState.postsList?.let {
+                items(it) { item ->
+                    ImageItem(
+                        item
+                    )
+                }
             }
         }
     }
