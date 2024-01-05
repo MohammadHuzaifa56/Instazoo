@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
@@ -21,7 +22,7 @@ kotlin {
 //        }
 //        binaries.executable()
 //    }
-    
+
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -29,9 +30,9 @@ kotlin {
             }
         }
     }
-    
+
     jvm("desktop")
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -42,15 +43,16 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
+            implementation(libs.sql.delight.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -60,7 +62,7 @@ kotlin {
             implementation(libs.kamel)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
-            
+
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
@@ -71,7 +73,15 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.annotation)
+            implementation(libs.sql.delight)
+            implementation(libs.sql.delight.coroutines)
         }
+
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+            implementation(libs.sql.delight.ios)
+        }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
@@ -129,4 +139,12 @@ compose.desktop {
 
 compose.experimental {
     web.application {}
+}
+
+sqldelight {
+    databases {
+        create("InstaZooDatabase") {
+            packageName.set("org.sample.instazoo.db")
+        }
+    }
 }

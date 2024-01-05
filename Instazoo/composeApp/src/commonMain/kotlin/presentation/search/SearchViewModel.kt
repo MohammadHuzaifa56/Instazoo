@@ -27,10 +27,12 @@ class SearchViewModel(private val searchRepository: SearchRepository) : ViewMode
     private fun getSearchPosts(){
         viewModelScope.launch {
             _searchPostUiState.update { SearchPostsUIState(isLoading = true) }
-            when(val response = searchRepository.getFeedPosts()){
-                is Resource.Success -> _searchPostUiState.update { SearchPostsUIState(searchPostsList = response.data, isLoading = false) }
-                is Resource.Error -> _searchPostUiState.update { SearchPostsUIState(error = response.message, isLoading = false) }
-                else -> Unit
+            searchRepository.getFeedPosts().collect{ resource ->
+                when(resource){
+                    is Resource.Success -> _searchPostUiState.update { SearchPostsUIState(searchPostsList = resource.data, isLoading = false) }
+                    is Resource.Error -> _searchPostUiState.update { SearchPostsUIState(error = resource.message, isLoading = false) }
+                    else -> Unit
+                }
             }
         }
     }

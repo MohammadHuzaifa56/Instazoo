@@ -1,10 +1,12 @@
 package di
 
+import DatabaseDriverFactory
 import data.remote.InstazooAPI
 import data.repository.HomeRepository
 import data.repository.HomeRepositoryImpl
 import data.repository.search.SearchRepository
 import data.repository.search.SearchRepositoryImpl
+import db.Database
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -13,6 +15,17 @@ import presentation.home.HomeScreenViewModel
 import presentation.search.SearchViewModel
 
 fun appModule() = module {
+
+    single {
+        Database(
+            databaseDriverFactory = get()
+        )
+    }
+
+    single {
+        DatabaseDriverFactory()
+    }
+
     single<HomeScreenViewModel> {
         HomeScreenViewModel()
     }
@@ -22,7 +35,7 @@ fun appModule() = module {
     }
 
     single<SearchRepository> {
-        SearchRepositoryImpl(get())
+        SearchRepositoryImpl(get(), get())
     }
 
     single<SearchViewModel> {

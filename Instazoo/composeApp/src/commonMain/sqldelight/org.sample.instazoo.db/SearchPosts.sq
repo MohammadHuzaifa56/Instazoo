@@ -1,0 +1,16 @@
+CREATE TABLE SearchItem (
+    post_image TEXT,
+    is_small INTEGER
+);
+
+selectAll:
+SELECT *
+FROM SearchItem;
+
+insert:
+INSERT INTO SearchItem(post_image, is_small)
+VALUES (?, ?);
+
+insertFullPlayerObject:
+INSERT INTO SearchItem(post_image, is_small)
+VALUES ?;

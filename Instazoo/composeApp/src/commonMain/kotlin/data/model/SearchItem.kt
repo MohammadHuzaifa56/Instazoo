@@ -14,3 +14,11 @@ data class SearchItem(
     @SerialName("comments") var comments: Int? = null,
     @SerialName("share") var share: Int? = null
 )
+
+fun orgsampleinstazoodb.SearchItem.toDomain(): SearchItem {
+    return SearchItem(postImage = this.post_image, isSmall = this.is_small?.toInt() == 0)
+}
+
+fun SearchItem.toData(): orgsampleinstazoodb.SearchItem {
+    return orgsampleinstazoodb.SearchItem(this.postImage, if (this.isSmall == true) 0 else 1)
+}

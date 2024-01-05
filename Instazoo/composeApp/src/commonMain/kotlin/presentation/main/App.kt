@@ -10,6 +10,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import cafe.adriel.voyager.navigator.tab.CurrentTab
@@ -18,6 +19,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import di.appModule
 import org.koin.compose.KoinApplication
+import org.koin.core.context.stopKoin
 
 @Composable
 fun App() {
@@ -43,6 +45,12 @@ fun App() {
                     }
                 }
             }
+        }
+    }
+
+    DisposableEffect(Unit){
+        onDispose {
+            stopKoin()
         }
     }
 }

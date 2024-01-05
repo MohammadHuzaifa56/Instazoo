@@ -24,6 +24,8 @@ koin = "3.5.3"
 koin-compose = "1.1.2"
 koin_ksp_version = "1.3.0"
 ksp_version = "1.9.22-1.0.16"
+sql_delight_version = "2.0.0"
+
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -54,9 +56,13 @@ moko-mvvm-core = { module = "dev.icerock.moko:mvvm-core", version.ref = "moko-mv
 moko-mvvm-compose = { module = "dev.icerock.moko:mvvm-compose", version.ref = "moko-mvvm" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose"}
-koin-annotation = { module = "io.insert-koin:koin-annotations", version.ref = "koin_ksp_version"}
-koin-ksp = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin_ksp_version"}
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose" }
+koin-annotation = { module = "io.insert-koin:koin-annotations", version.ref = "koin_ksp_version" }
+koin-ksp = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin_ksp_version" }
+sql-delight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sql_delight_version" }
+sql-delight-ios = { module = "app.cash.sqldelight:native-driver", version.ref = "sql_delight_version" }
+sql-delight = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql_delight_version" }
+sql-delight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sql_delight_version" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -65,3 +71,4 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp_version" }
+sqlDelight = { id = "app.cash.sqldelight", version.ref = "sql_delight_version" }
