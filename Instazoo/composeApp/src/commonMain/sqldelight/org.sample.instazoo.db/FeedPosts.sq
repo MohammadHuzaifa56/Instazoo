@@ -1,0 +1,17 @@
+CREATE TABLE FeedPostItemEntity (
+    user_name TEXT,
+    user_profile_pic TEXT,
+    post_image TEXT,
+    location TEXT,
+    likes INTEGER,
+    comments INTEGER,
+    share INTEGER
+);
+
+selectAllFeedPosts:
+SELECT *
+FROM FeedPostItemEntity;
+
+insertFeedPost:
+INSERT INTO FeedPostItemEntity(user_name, user_profile_pic, post_image, location, likes, comments, share)
+VALUES ?;

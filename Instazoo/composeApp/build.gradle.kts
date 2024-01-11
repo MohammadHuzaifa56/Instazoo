@@ -145,6 +145,7 @@ sqldelight {
     databases {
         create("InstaZooDatabase") {
             packageName.set("org.sample.instazoo.db")
+            version = 2
         }
     }
 }

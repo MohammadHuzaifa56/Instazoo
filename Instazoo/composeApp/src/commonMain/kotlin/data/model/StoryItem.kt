@@ -11,3 +11,11 @@ data class StoryItem(
     @SerialName("profile_pic")
     var profilePic: String? = null,
 )
+
+fun orgsampleinstazoodb.StoryItemEntity.toDomain(): StoryItem {
+    return StoryItem(userName = user_name, profilePic = user_profile_pic)
+}
+
+fun StoryItem.toData(): orgsampleinstazoodb.StoryItemEntity {
+    return orgsampleinstazoodb.StoryItemEntity(this.userName, this.profilePic)
+}

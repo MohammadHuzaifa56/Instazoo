@@ -1,26 +1,23 @@
 package di
 
 import DatabaseDriverFactory
+import app.cash.sqldelight.Transacter
 import data.remote.InstazooAPI
 import data.repository.HomeRepository
 import data.repository.HomeRepositoryImpl
 import data.repository.search.SearchRepository
 import data.repository.search.SearchRepositoryImpl
-import db.Database
+import db.FeedPosts.HomeScreenDb
+import db.SearchPosts.SearchPostDb
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import org.koin.dsl.module
+import org.sample.instazoo.db.InstaZooDatabase
 import presentation.home.HomeScreenViewModel
 import presentation.search.SearchViewModel
 
 fun appModule() = module {
-
-    single {
-        Database(
-            databaseDriverFactory = get()
-        )
-    }
 
     single {
         DatabaseDriverFactory()
@@ -31,7 +28,7 @@ fun appModule() = module {
     }
 
     single<HomeRepository> {
-        HomeRepositoryImpl(get())
+        HomeRepositoryImpl(get(),get())
     }
 
     single<SearchRepository> {
@@ -51,7 +48,20 @@ fun appModule() = module {
         }
     }
 
-    single{
+    single {
         InstazooAPI(get())
+    }
+
+    single {
+        val factory: DatabaseDriverFactory = get()
+        factory.createDriver()?.let { InstaZooDatabase(it) }
+    }
+
+    single {
+        SearchPostDb(get())
+    }
+
+    single {
+        HomeScreenDb(get())
     }
 }

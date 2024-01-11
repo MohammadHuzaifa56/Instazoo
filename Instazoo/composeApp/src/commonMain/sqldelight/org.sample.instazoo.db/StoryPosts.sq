@@ -1,0 +1,12 @@
+CREATE TABLE StoryItemEntity (
+    user_name TEXT,
+    user_profile_pic TEXT
+);
+
+selectAllStories:
+SELECT *
+FROM StoryItemEntity;
+
+insertStoryItem:
+INSERT INTO StoryItemEntity(user_name, user_profile_pic)
+VALUES ?;

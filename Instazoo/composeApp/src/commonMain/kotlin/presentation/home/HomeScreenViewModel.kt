@@ -4,7 +4,6 @@ import data.model.FeedPost
 import data.model.StoryItem
 import data.remote.Resource
 import data.repository.HomeRepository
-import data.repository.HomeRepositoryImpl
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,56 +37,59 @@ class HomeScreenViewModel: ViewModel(), KoinComponent {
         viewModelScope.launch {
             val feedPosts = async { homeRepository.getFeedPosts() }
             val storyItems = async { homeRepository.getStories() }
+            feedPosts.await().collect { result ->
+                when (result) {
+                    is Resource.Loading -> _postUiState.update {
+                        FeedPostsUIState(
+                            isLoading = true,
+                            postsList = null,
+                            error = null
+                        )
+                    }
 
-            when (val result = feedPosts.await()) {
-                is Resource.Loading -> _postUiState.update {
-                    FeedPostsUIState(
-                        isLoading = true,
-                        postsList = null,
-                        error = null
-                    )
-                }
+                    is Resource.Success -> _postUiState.update {
+                        FeedPostsUIState(
+                            isLoading = false,
+                            postsList = result.data ?: emptyList(),
+                            error = null,
+                        )
+                    }
 
-                is Resource.Success -> _postUiState.update {
-                    FeedPostsUIState(
-                        isLoading = false,
-                        postsList = result.data ?: emptyList(),
-                        error = null,
-                    )
-                }
-
-                is Resource.Error -> _postUiState.update {
-                    FeedPostsUIState(
-                        isLoading = false,
-                        postsList = null,
-                        error = result.message,
-                    )
+                    is Resource.Error -> _postUiState.update {
+                        FeedPostsUIState(
+                            isLoading = false,
+                            postsList = null,
+                            error = result.message,
+                        )
+                    }
                 }
             }
 
-            when (val result = storyItems.await()) {
-                is Resource.Loading -> _storyUiState.update {
-                    StoriesUIState(
-                        isLoading = true,
-                        storiesList = null,
-                        error = null
-                    )
-                }
+            storyItems.await().collect { result ->
+                when (result) {
+                    is Resource.Loading -> _storyUiState.update {
+                        StoriesUIState(
+                            isLoading = true,
+                            storiesList = null,
+                            error = null
+                        )
+                    }
 
-                is Resource.Success -> _storyUiState.update {
-                    StoriesUIState(
-                        isLoading = false,
-                        storiesList = result.data ?: emptyList(),
-                        error = null,
-                    )
-                }
+                    is Resource.Success -> _storyUiState.update {
+                        StoriesUIState(
+                            isLoading = false,
+                            storiesList = result.data ?: emptyList(),
+                            error = null,
+                        )
+                    }
 
-                is Resource.Error -> _storyUiState.update {
-                    StoriesUIState(
-                        isLoading = false,
-                        storiesList = null,
-                        error = result.message,
-                    )
+                    is Resource.Error -> _storyUiState.update {
+                        StoriesUIState(
+                            isLoading = false,
+                            storiesList = null,
+                            error = result.message,
+                        )
+                    }
                 }
             }
         }

@@ -4,44 +4,57 @@ import data.model.FeedPost
 import data.model.StoryItem
 import data.remote.InstazooAPI
 import data.remote.Resource
+import db.FeedPosts.HomeScreenDb
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.utils.io.errors.IOException
-import org.koin.core.annotation.Single
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
-class HomeRepositoryImpl(private val api: InstazooAPI): HomeRepository {
-    override suspend fun getFeedPosts(): Resource<List<FeedPost>> {
-        return try {
-            val response = api.fetchFeedPosts(endPoint = "feedPosts.json")
-            Resource.Success(response)
+class HomeRepositoryImpl(private val api: InstazooAPI, private val homeScreenDb: HomeScreenDb) :
+    HomeRepository {
+    override suspend fun getFeedPosts(): Flow<Resource<List<FeedPost>>> = flow {
+        try {
+            val dbData = homeScreenDb.getAllFeedPosts()
+            if (dbData?.isNotEmpty() == true) {
+                emit(Resource.Success(dbData))
+            } else {
+                val response = api.fetchFeedPosts(endPoint = "feedPosts.json")
+                homeScreenDb.insertFeedPosts(response)
+                emit(Resource.Success(response))
+            }
         } catch (e: IOException) {
             e.printStackTrace()
-            Resource.Error(
-                message = "Couldn't load"
+            emit(
+                Resource.Error(
+                    message = "Couldn't load"
+                )
             )
         } catch (e: HttpRequestTimeoutException) {
             e.printStackTrace()
-            Resource.Error(
-                message = "time out"
+            emit(
+                Resource.Error(
+                    message = "time out"
+                )
             )
         }
     }
 
-    override suspend fun getStories(): Resource<List<StoryItem>> {
-        return try {
-            val response = api.fetchStories(endPoint = "storyPosts.json")
-            Resource.Success(response)
+    override suspend fun getStories(): Flow<Resource<List<StoryItem>>> = flow {
+        try {
+            val dbData = homeScreenDb.getAllStories()
+            if (dbData?.isNotEmpty() == true) {
+                emit(Resource.Success(dbData))
+            } else {
+                val response = api.fetchStories(endPoint = "storyPosts.json")
+                homeScreenDb.insertStories(response)
+                emit(Resource.Success(response))
+            }
         } catch (e: IOException) {
             e.printStackTrace()
-            Resource.Error(
-                message = "Couldn't load"
-            )
+            emit(Resource.Error(message = "Couldn't load"))
         } catch (e: HttpRequestTimeoutException) {
             e.printStackTrace()
-            Resource.Error(
-                message = "time out"
-            )
+            emit(Resource.Error(message = "time out"))
         }
     }
 }

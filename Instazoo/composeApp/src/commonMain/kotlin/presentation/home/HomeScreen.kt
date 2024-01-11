@@ -72,10 +72,10 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val storiesUIState by homeViewModel.storyUIState.collectAsState()
 
     Scaffold(topBar = {
-                    Row(modifier = Modifier.fillMaxWidth().background(Color.White).padding(12.dp)) {
-                        Text("Instazoo", fontSize = 22.sp, color = Color.Black)
-                    }
-    }){
+        Row(modifier = Modifier.fillMaxWidth().background(Color.White).padding(12.dp)) {
+            Text("Instazoo", fontSize = 22.sp, color = Color.Black)
+        }
+    }) {
         LazyColumn(modifier = Modifier.fillMaxSize().padding(bottom = 20.dp))
         {
             item {
