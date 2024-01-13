@@ -73,7 +73,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.annotation)
-            implementation(libs.sql.delight)
+            //implementation(libs.sql.delight)
             implementation(libs.sql.delight.coroutines)
         }
 
