@@ -1,6 +1,7 @@
 package presentation.main
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Home
@@ -11,7 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import presentation.home.HomeScreen
+import presentation.profile.ProfileScreen
 import presentation.search.SearchScreen
 
 object HomeTab : Tab {
@@ -85,12 +89,12 @@ object AddTab : Tab {
 
 object ReelsTab : Tab {
 
+    @OptIn(ExperimentalResourceApi::class)
     override val options: TabOptions
         @Composable
         get() {
             val title = "Reels"
-            val icon = rememberVectorPainter(Icons.Default.ArrowForward)
-
+            val icon = painterResource("ic_reels_new.xml")
             return remember {
                 TabOptions(
                     index = 0u,
@@ -112,7 +116,7 @@ object ProfileTab : Tab {
         @Composable
         get() {
             val title = "Profile"
-            val icon = rememberVectorPainter(Icons.Default.Person)
+            val icon = rememberVectorPainter(Icons.Default.AccountCircle)
 
             return remember {
                 TabOptions(
@@ -125,6 +129,6 @@ object ProfileTab : Tab {
 
     @Composable
     override fun Content() {
-
+        ProfileScreen()
     }
 }

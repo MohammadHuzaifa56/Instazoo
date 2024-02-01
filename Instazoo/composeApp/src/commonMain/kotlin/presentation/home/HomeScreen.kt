@@ -8,9 +8,9 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,15 +26,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalTextStyle
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +61,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,6 +71,7 @@ import data.model.FeedPost
 import data.model.StoryItem
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
@@ -66,36 +79,59 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val feedPostsUIState by homeViewModel.postsUiStateFlow.collectAsState()
     val storiesUIState by homeViewModel.storyUIState.collectAsState()
+    val scope = rememberCoroutineScope()
+
+    val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     Scaffold(topBar = {
-        Row(modifier = Modifier.fillMaxWidth().background(Color.White).padding(12.dp)) {
-            Text("Instazoo", fontSize = 22.sp, color = Color.Black)
-        }
-    }) {
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(bottom = 20.dp))
-        {
-            item {
-                storiesUIState.storiesList?.let {
-                    LazyRow(modifier = Modifier.fillMaxWidth()) {
-                        items(it) {
-                            StoryItemView(
-                                it
-                            )
-                            Spacer(Modifier.width(14.dp))
+        TopAppBar(
+            title = {
+                Text("Instazoo", fontSize = 22.sp, color = Color.Black)
+            }, colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.White,
+                scrolledContainerColor = Color.White
+            ), scrollBehavior = scrollBehavior
+        )
+    }, modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)) {
+        ModalBottomSheetLayout(
+            sheetContent = {
+               CommentsSheetView(homeViewModel)
+            },
+            sheetState = sheetState,
+            sheetShape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
+        ) {
+            LazyColumn(modifier = Modifier.fillMaxSize())
+            {
+                item {
+                    storiesUIState.storiesList?.let {
+                        LazyRow(modifier = Modifier.fillMaxWidth()) {
+                            items(it) {
+                                StoryItemView(
+                                    it
+                                )
+                                Spacer(Modifier.width(14.dp))
+                            }
                         }
                     }
                 }
-            }
 
-            feedPostsUIState.postsList?.let {
-                items(it) { item ->
-                    ImageItem(
-                        item
-                    )
+                feedPostsUIState.postsList?.let {
+                    items(it) { item ->
+                        ImageItem(
+                            item
+                        ) {
+                            scope.launch {
+                                sheetState.show()
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -144,13 +180,20 @@ fun StoryItemView(storyItem: StoryItem) {
                 modifier = Modifier.size(60.dp).clip(CircleShape)
             )
         }
-        Text(text = storyItem.userName.orEmpty(), modifier = Modifier.width(70.dp), maxLines = 1, overflow = TextOverflow.Ellipsis, color = Color.Black, fontSize = 12.sp)
+        Text(
+            text = storyItem.userName.orEmpty(),
+            modifier = Modifier.width(70.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = Color.Black,
+            fontSize = 12.sp
+        )
     }
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun ImageItem(postItem: FeedPost) {
+fun ImageItem(postItem: FeedPost, openComments: ()-> Unit) {
     var isLiked by remember {
         mutableStateOf(false)
     }
@@ -158,6 +201,13 @@ fun ImageItem(postItem: FeedPost) {
     val likeColor by animateColorAsState(
         targetValue = if (isLiked) Color.Red else Color.Black
     )
+
+    val likeIcon by remember {
+        derivedStateOf {
+            if (isLiked) "ic_heart_filled.xml" else "ic_heart_like.xml"
+        }
+    }
+
     Column(modifier = Modifier.padding(6.dp)) {
         Box {
             KamelImage(
@@ -203,31 +253,37 @@ fun ImageItem(postItem: FeedPost) {
                 }
             }
         }
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                painter = painterResource("ic_heart_like.xml"),
+                painter = painterResource(likeIcon),
                 contentDescription = "",
                 tint = likeColor,
-                modifier = Modifier.size(26.dp).clickable {
+                modifier = Modifier.size(26.dp).padding(1.dp).clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }) {
                     isLiked = !isLiked
                 }
             )
             Text(text = postItem.likes.toString(), fontSize = 14.sp)
 
-            Spacer(Modifier.width(6.dp))
+            Spacer(Modifier.width(8.dp))
             Icon(
-                painter = painterResource("ic_comment.xml"),
+                painter = painterResource("ic_comments.xml"),
                 contentDescription = "",
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(24.dp).padding(2.dp).clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }) {
+                    openComments.invoke()
+                }
             )
             Text(text = postItem.comments.toString(), fontSize = 14.sp)
 
-            Spacer(Modifier.width(6.dp))
+            Spacer(Modifier.width(8.dp))
             Icon(
-                painter = painterResource("ic_send.xml"),
+                painter = painterResource("ic_share.xml"),
                 contentDescription = "",
-                modifier = Modifier.size(26.dp)
+                modifier = Modifier.size(22.dp).padding(2.dp)
             )
             Text(text = postItem.share.toString(), fontSize = 14.sp)
         }

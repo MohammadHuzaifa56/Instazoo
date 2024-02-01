@@ -1,5 +1,6 @@
 package data.remote
 
+import data.model.CommentItem
 import data.model.FeedPost
 import data.model.SearchItem
 import data.model.StoryItem
@@ -23,4 +24,7 @@ class InstazooAPI(private val client: HttpClient) {
 
     suspend fun fetchSearchPosts(baseUrl: String = BASE_URL, endPoint: String) : List<SearchItem> =
         client.get("$baseUrl$endPoint").body()
+
+    suspend fun fetchComments(baseUrl: String = BASE_URL, endPoint: String): List<CommentItem> =
+        client.get("$baseUrl$endPoint").body<List<CommentItem>>()
 }

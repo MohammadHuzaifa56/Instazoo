@@ -1,5 +1,6 @@
 package data.repository
 
+import data.model.CommentItem
 import data.model.FeedPost
 import data.model.StoryItem
 import data.remote.InstazooAPI
@@ -49,6 +50,19 @@ class HomeRepositoryImpl(private val api: InstazooAPI, private val homeScreenDb:
                 homeScreenDb.insertStories(response)
                 emit(Resource.Success(response))
             }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            emit(Resource.Error(message = "Couldn't load"))
+        } catch (e: HttpRequestTimeoutException) {
+            e.printStackTrace()
+            emit(Resource.Error(message = "time out"))
+        }
+    }
+
+    override suspend fun getComments(): Flow<Resource<List<CommentItem>>> = flow {
+        try {
+            val response = api.fetchComments(endPoint = "post_comments.json")
+            emit(Resource.Success(response))
         } catch (e: IOException) {
             e.printStackTrace()
             emit(Resource.Error(message = "Couldn't load"))
