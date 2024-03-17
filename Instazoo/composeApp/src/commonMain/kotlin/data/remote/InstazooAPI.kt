@@ -1,5 +1,6 @@
 package data.remote
 
+import data.model.AccountDetail
 import data.model.CommentItem
 import data.model.FeedPost
 import data.model.SearchItem
@@ -22,9 +23,12 @@ class InstazooAPI(private val client: HttpClient) {
     suspend fun fetchStories(baseUrl: String = BASE_URL, endPoint: String): List<StoryItem> =
         client.get("$baseUrl$endPoint").body<List<StoryItem>>()
 
-    suspend fun fetchSearchPosts(baseUrl: String = BASE_URL, endPoint: String) : List<SearchItem> =
+    suspend fun fetchSearchPosts(baseUrl: String = BASE_URL, endPoint: String): List<SearchItem> =
         client.get("$baseUrl$endPoint").body()
 
     suspend fun fetchComments(baseUrl: String = BASE_URL, endPoint: String): List<CommentItem> =
         client.get("$baseUrl$endPoint").body<List<CommentItem>>()
+
+    suspend fun fetchAccountDetail(baseUrl: String = BASE_URL, endPoint: String): AccountDetail =
+        client.get("$baseUrl$endPoint").body<AccountDetail>()
 }

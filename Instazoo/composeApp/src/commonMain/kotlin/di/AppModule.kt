@@ -5,6 +5,8 @@ import app.cash.sqldelight.Transacter
 import data.remote.InstazooAPI
 import data.repository.HomeRepository
 import data.repository.HomeRepositoryImpl
+import data.repository.profile.ProfileRepository
+import data.repository.profile.ProfileRepositoryImpl
 import data.repository.search.SearchRepository
 import data.repository.search.SearchRepositoryImpl
 import db.FeedPosts.HomeScreenDb
@@ -15,7 +17,9 @@ import io.ktor.serialization.kotlinx.json.json
 import org.koin.dsl.module
 import org.sample.instazoo.db.InstaZooDatabase
 import presentation.home.HomeScreenViewModel
+import presentation.profile.ProfileScreenViewModel
 import presentation.search.SearchViewModel
+import kotlin.math.sin
 
 fun appModule() = module {
 
@@ -27,8 +31,16 @@ fun appModule() = module {
         HomeScreenViewModel()
     }
 
+    single<ProfileScreenViewModel> {
+        ProfileScreenViewModel()
+    }
+
     single<HomeRepository> {
         HomeRepositoryImpl(get(),get())
+    }
+
+    single<ProfileRepository> {
+        ProfileRepositoryImpl(get())
     }
 
     single<SearchRepository> {

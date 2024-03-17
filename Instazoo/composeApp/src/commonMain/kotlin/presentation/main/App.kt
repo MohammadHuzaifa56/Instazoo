@@ -26,7 +26,7 @@ fun App() {
     KoinApplication(application = {
         modules(appModule())
     }) {
-        MaterialTheme {
+        InstazooTheme {
             TabNavigator(HomeTab) {
                 Scaffold(bottomBar = {
                     BottomNavigation(
