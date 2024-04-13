@@ -3,10 +3,14 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
+import org.sample.instazoo.db.InstaZooDatabase
 
 actual class DatabaseDriverFactory {
     actual fun createDriver(): SqlDriver? {
-        return null
+        val driver: SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+        InstaZooDatabase.Schema.create(driver)
+        return driver
     }
 }
 

@@ -31,7 +31,7 @@ fun App() {
                 Scaffold(bottomBar = {
                     BottomNavigation(
                         modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = Color.White
+                        backgroundColor = MaterialTheme.colors.background
                     ) {
                         TabNavigationItem(HomeTab)
                         TabNavigationItem(SearchTab)

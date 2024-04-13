@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalTextStyle
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
@@ -76,6 +77,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
+import presentation.main.InstazooTheme
+import presentation.utils.InstaLoadingProgress
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -91,13 +94,13 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
-    Scaffold(topBar = {
+    Scaffold(backgroundColor = MaterialTheme.colors.background, topBar = {
         TopAppBar(
             title = {
-                Text("Instazoo", fontSize = 22.sp, color = Color.Black)
+                Text("Instazoo", fontSize = 22.sp, color = MaterialTheme.colors.primary)
             }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.White,
-                scrolledContainerColor = Color.White
+                containerColor = MaterialTheme.colors.background,
+                scrolledContainerColor = MaterialTheme.colors.background
             ), scrollBehavior = scrollBehavior
         )
     }, modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)) {
@@ -186,7 +189,6 @@ fun StoryItemView(storyItem: StoryItem) {
             modifier = Modifier.width(70.dp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = Color.Black,
             fontSize = 12.sp
         )
     }
@@ -200,7 +202,7 @@ fun ImageItem(postItem: FeedPost, openComments: ()-> Unit) {
     }
 
     val likeColor by animateColorAsState(
-        targetValue = if (isLiked) Color.Red else Color.Black
+        targetValue = if (isLiked) Color.Red else MaterialTheme.colors.primary
     )
 
     val likeIcon by remember {
@@ -216,17 +218,7 @@ fun ImageItem(postItem: FeedPost, openComments: ()-> Unit) {
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 onLoading = { progress ->
-                    Box(modifier = Modifier.size(50.dp).drawWithContent {
-                        drawRoundRect(
-                            color = Color.LightGray,
-                            cornerRadius = CornerRadius(size.width, size.width),
-                            style = Stroke(width = 1.dp.toPx())
-                        )
-                        if (progress>0) {
-                            drawProgressDownloadCurve(progress = progress)
-                        }
-                        drawContent()
-                    })
+                    InstaLoadingProgress(progress)
                 },
 
                 modifier = Modifier.fillMaxWidth().aspectRatio(0.7f)
@@ -266,7 +258,6 @@ fun ImageItem(postItem: FeedPost, openComments: ()-> Unit) {
                     isLiked = !isLiked
                 }
             )
-            Text(text = postItem.likes.toString(), fontSize = 14.sp)
 
             Spacer(Modifier.width(8.dp))
             Icon(
@@ -278,7 +269,6 @@ fun ImageItem(postItem: FeedPost, openComments: ()-> Unit) {
                     openComments.invoke()
                 }
             )
-            Text(text = postItem.comments.toString(), fontSize = 14.sp)
 
             Spacer(Modifier.width(8.dp))
             Icon(
@@ -286,30 +276,12 @@ fun ImageItem(postItem: FeedPost, openComments: ()-> Unit) {
                 contentDescription = "",
                 modifier = Modifier.size(22.dp).padding(2.dp)
             )
-            Text(text = postItem.share.toString(), fontSize = 14.sp)
         }
+        Text(
+            text = "${postItem.likes} likes",
+            modifier = Modifier.run { padding(4.dp) },
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp
+        )
     }
-}
-
-fun ContentDrawScope.drawProgressDownloadCurve(progress: Float){
-    drawArc(
-        color = Color.White,
-        startAngle = -90f,
-        sweepAngle = progress,
-        useCenter = false,
-        size = Size(size.width, size.height),
-        style = Stroke(3.dp.toPx(), cap = StrokeCap.Round)
-    )
-    val center = Offset(size.width / 2f, size.height / 2f)
-    val beta = (progress - 90f) * (PI / 180f).toFloat()
-    val r = size.width / 2f
-    val a = cos(beta) * r
-    val b = sin(beta) * r
-    drawPoints(
-        listOf(Offset(center.x + a, center.y + b)),
-        pointMode = PointMode.Points,
-        color = Color.White,
-        strokeWidth = 10.dp.toPx(),
-        cap = StrokeCap.Round
-    )
 }

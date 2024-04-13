@@ -1,5 +1,6 @@
 package presentation.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,12 +33,11 @@ fun CommentsSheetView(homeScreenViewModel: HomeScreenViewModel) {
 
     val commentsUIState by homeScreenViewModel.commentsUIState.collectAsState()
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(MaterialTheme.colors.onSecondary)) {
         Spacer(Modifier.height(20.dp))
         Text(
             text = "Comments",
             fontSize = 18.sp,
-            color = Color.Black,
             fontWeight = FontWeight.Black,
             textAlign = TextAlign.Center
         )

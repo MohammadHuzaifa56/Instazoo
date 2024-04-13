@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -60,8 +61,8 @@ fun CommentItemView(commentItem: CommentItem) {
             Text(
                 text = commentItem.profileName,
                 overflow = TextOverflow.Ellipsis,
-                color = Color.Black,
                 fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.primary,
                 fontSize = 12.sp
             )
             Spacer(Modifier.height(4.dp))
@@ -69,8 +70,8 @@ fun CommentItemView(commentItem: CommentItem) {
                 text = commentItem.comment,
                 maxLines = 5,
                 overflow = TextOverflow.Ellipsis,
-                color = Color.DarkGray,
                 fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colors.onPrimary,
                 fontSize = 10.sp
             )
         }

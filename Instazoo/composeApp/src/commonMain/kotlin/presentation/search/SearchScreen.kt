@@ -21,6 +21,7 @@ import data.model.SearchItem
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.koin.compose.koinInject
+import presentation.utils.InstaLoadingProgress
 import presentation.utils.shimmerEffect
 
 @Composable
@@ -53,7 +54,7 @@ fun SearchItemView(searchItem: SearchItem) {
         modifier = Modifier.width(170.dp)
             .height(if (searchItem.isSmall == true) 170.dp else 270.dp),
         onLoading = {
-            Box(Modifier.fillMaxSize().shimmerEffect(true))
+            InstaLoadingProgress(it)
         }
     )
 }
