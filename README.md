@@ -1,7 +1,7 @@
 # Instazoo KMP App - An Instagram Clone Built with Compose Multiplatform
 
-
-Click the image above to watch a YouTube demo of the Gemini AI KMP App.
+[![Instazoo KMP App Preview](Instazoo/screenshots/Instazoo-KMP-app.png)](https://youtu.be/D9Qnz9lglu0)
+Click the image above to watch a YouTube demo of the Instazoo KMP App.
 
 ## Overview
 Instazoo KMP is a clone of Instagram built with Compose Multiplatform. This app supports Android, iOS, and desktop platforms. The app fetches data from a static API hosted on GitHub Pages. The primary purpose of this app is to provide a hands-on experience with KMP Compose Multiplatform.
@@ -11,14 +11,16 @@ Instazoo KMP is a clone of Instagram built with Compose Multiplatform. This app 
 
 ## Features
 
-- Posts in a feed format with options to like, comment and share.
+- Posts in a feed format with options to like, comment, and share.
 - A horizontal list of stories on the home screen.
 - Comments on each post can be viewed by opening the bottom sheet.
-- The bottom navigation bar lets you switch between different sections of the app.
+- The bottom navigation bar lets you switch between different app sections.
 - The search section displays a staggered view of random items by default.
 - The app has responsive loading for each request and image loading.
-- User data such as name, bio, profile picture, followers, followings and posts can be viewed.
+- User data such as name, bio, profile picture, followers, followings, and posts can be viewed.
 - The profile screen displays user posts in a grid format.
+- Custom Fonts
+- Adjust both dark and light themes for better user experience.
 
 # Technologies:
 
