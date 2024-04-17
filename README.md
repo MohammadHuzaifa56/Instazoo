@@ -1,6 +1,5 @@
 # Instazoo KMP App - An Instagram Clone Built with Compose Multiplatform
 
-[![Gemini AI KMP App Preview](image/Gemini-AI-KMP-App.png)](https://youtu.be/YhWhR6IVs_Y)
 
 Click the image above to watch a YouTube demo of the Gemini AI KMP App.
 
