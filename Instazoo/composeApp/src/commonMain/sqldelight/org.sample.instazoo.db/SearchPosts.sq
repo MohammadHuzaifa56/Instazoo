@@ -14,3 +14,4 @@ VALUES (?, ?);
 insertFullPlayerObject:
 INSERT INTO SearchItem(post_image, is_small)
 VALUES ?;
+

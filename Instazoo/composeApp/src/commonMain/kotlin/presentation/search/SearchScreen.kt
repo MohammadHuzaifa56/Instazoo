@@ -54,7 +54,7 @@ fun SearchItemView(searchItem: SearchItem) {
         modifier = Modifier.width(170.dp)
             .height(if (searchItem.isSmall == true) 170.dp else 270.dp),
         onLoading = {
-            InstaLoadingProgress(it)
+            InstaLoadingProgress(progress = it)
         }
     )
 }
