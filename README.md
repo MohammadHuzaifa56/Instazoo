@@ -30,6 +30,7 @@ Instazoo KMP is a clone of Instagram built with Compose Multiplatform. This app 
 - Network Requests
 - Local Database
 - Dependency Injection
+- Compose Navigation
 
 ## Libraries 🛠️
 
@@ -41,3 +42,5 @@ Instazoo KMP is a clone of Instagram built with Compose Multiplatform. This app 
   multiplatform support.
 - [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) - Provides sets of libraries for various
   serialization formats eg. JSON, protocol buffers, CBOR etc.
+- [Voyager](https://voyager.adriel.cafe/) - A Multiplatform navigation library
+- [Kamel](https://github.com/Kamel-Media/Kamel) - Asynchronous media loading library for Compose Multiplatform
