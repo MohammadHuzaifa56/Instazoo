@@ -68,7 +68,6 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import data.model.StoryItem
-import data.model.UserStory
 import io.kamel.core.Resource
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -89,21 +88,17 @@ class StoriesPagerScreen(val userId: Int): Screen {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
 @Composable
 fun StoriesMainScreen(userId: Int, storiesMainViewModel: StoriesMainViewModel = koinInject()) {
     val storiesListState by storiesMainViewModel.userStoriesUIState.collectAsState()
     var currentPagingIndex by remember { mutableStateOf(1) }
     val currentStoryIndex by remember { mutableStateOf(0) }
+    val navigator = LocalNavigator.current
     val pagerState = rememberPagerState(
         initialPageOffsetFraction = 0f,
     ) {
-        storiesListState.mainStoriesList?.size ?: 0
-    }
-
-
-    LaunchedEffect(userId) {
-        storiesMainViewModel.getAllUserStories()
+        storiesListState.mainStoriesList?.size?:0
     }
 
     LaunchedEffect(storiesListState) {
@@ -185,7 +180,6 @@ fun StoriesMainScreen(userId: Int, storiesMainViewModel: StoriesMainViewModel = 
 
         HorizontalPager(
             pagerState,
-            beyondBoundsPageCount = 0,
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
@@ -221,9 +215,7 @@ fun StoriesMainScreen(userId: Int, storiesMainViewModel: StoriesMainViewModel = 
                                         currentPage--
                                         storiesPagerState.animateScrollToPage(currentPage)
                                     } else if (pagerState.currentPage - 1 > 0) {
-                                        currentPage =
-                                            storiesListState.mainStoriesList?.get(currentPagingIndex - 1)?.storiesList?.size
-                                                ?: 0
+                                        currentPage = storiesListState.mainStoriesList?.get(currentPagingIndex - 1)?.storiesList?.size ?: 0
                                         pagerState.animateScrollToPage(pagerState.currentPage - 1)
                                     }
                                 }
@@ -234,197 +226,135 @@ fun StoriesMainScreen(userId: Int, storiesMainViewModel: StoriesMainViewModel = 
                     )
                 }
         ) { pagePosition ->
-            MainStoryItem(
-                pagerState = pagerState,
-                storiesPagerState = storiesPagerState,
-                pauseStory = pauseStory,
-                pagePosition = pagePosition,
-                currentStoryItem = currentStoryItem,
-                currentUserStoriesList = currentUserStoriesList,
-                currentUserStoryMain = currentUserStoryMain,
-                currentPage = currentPage,
-                onEveryStoryChange = {
-                    scope.launch {
-                        currentPage = it
-                        storiesPagerState.scrollToPage(it)
-                    }
-                },
-                onComplete = {
-                    scope.launch {
-                        pagerState.animateScrollToPage(currentPagingIndex + 1)
-                    }
-                }
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun MainStoryItem(
-    pagerState: PagerState,
-    storiesPagerState: PagerState,
-    pauseStory: Boolean,
-    pagePosition: Int,
-    currentStoryItem: StoryItem?,
-    currentUserStoriesList: List<StoryItem>,
-    currentUserStoryMain: UserStory?,
-    currentPage: Int,
-    onEveryStoryChange: (Int) -> Unit,
-    onComplete: () -> Unit
-) {
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .animateContentSize(animationSpec = tween(500, easing = LinearOutSlowInEasing))
-            .graphicsLayer {
-                val pageOffset = pagerState.offsetForPage(pagePosition)
-                val offScreenRight = pageOffset < 0f
-                val deg = 105f
-                val interpolated = FastOutLinearInEasing.transform(pageOffset.absoluteValue)
-                rotationY = min(interpolated * if (offScreenRight) deg else -deg, 90f)
-
-                transformOrigin = TransformOrigin(
-                    pivotFractionX = if (offScreenRight) 0f else 1f,
-                    pivotFractionY = .5f
-                )
-            }
-            .drawWithContent {
-                val pageOffset = pagerState.offsetForPage(pagePosition)
-
-                this.drawContent()
-                drawRect(
-                    Color.Black.copy(
-                        (pageOffset.absoluteValue * .7f)
-                    )
-                )
-            }
-            .background(Color.LightGray)
-    ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .background(Color.DarkGray)
-        ) {
-            var storyDownloaded by remember {
-                mutableStateOf(false)
-            }
-
-            HorizontalPager(
-                state = storiesPagerState,
-                userScrollEnabled = false,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                StoryImageView(storyItem = currentStoryItem, onLoading = {
-                    storyDownloaded = false
-                }) {
-                    storyDownloaded = true
-                }
-            }
-
-            Box(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Black.copy(alpha = 0.8f),
-                                Color.Transparent
+                    .fillMaxSize()
+                    .animateContentSize(animationSpec = tween(500, easing = LinearOutSlowInEasing))
+                    .graphicsLayer {
+                        val pageOffset = pagerState.offsetForPage(pagePosition)
+                        val offScreenRight = pageOffset < 0f
+                        val deg = 105f
+                        val interpolated = FastOutLinearInEasing.transform(pageOffset.absoluteValue)
+                        rotationY = min(interpolated * if (offScreenRight) deg else -deg, 90f)
+
+                        transformOrigin = TransformOrigin(
+                            pivotFractionX = if (offScreenRight) 0f else 1f,
+                            pivotFractionY = .5f
+                        )
+                    }
+                    .drawWithContent {
+                        val pageOffset = pagerState.offsetForPage(pagePosition)
+
+                        this.drawContent()
+                        drawRect(
+                            Color.Black.copy(
+                                (pageOffset.absoluteValue * .7f)
                             )
                         )
-                    )
-            )
+                    }
+                    .background(Color.LightGray)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(Color.DarkGray)
+                ) {
+                    var storyDownloaded by remember {
+                        mutableStateOf(false)
+                    }
 
-            StoryHeader(
-                currentUserStoriesList = currentUserStoriesList,
-                currentStoryItem = currentStoryItem,
-                currentUserStoryMain = currentUserStoryMain,
-                pauseStory = pauseStory,
-                currentPage = currentPage,
-                storyDownloaded = storyDownloaded,
-                onEveryStoryChange = onEveryStoryChange,
-                onComplete = onComplete
-            )
-        }
-        StoryReplyView()
-    }
-}
+                    HorizontalPager(
+                        state = storiesPagerState,
+                        userScrollEnabled = false,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        StoryImageView(storyItem = currentStoryItem, onLoading = {
+                            storyDownloaded = false
+                        }) {
+                            storyDownloaded = true
+                        }
+                    }
 
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-fun StoryHeader(
-    currentUserStoriesList: List<StoryItem>,
-    currentStoryItem: StoryItem?,
-    currentUserStoryMain: UserStory?,
-    pauseStory: Boolean,
-    currentPage: Int,
-    storyDownloaded: Boolean,
-    onEveryStoryChange: (Int) -> Unit,
-    onComplete: () -> Unit
-) {
-
-    val navigator = LocalNavigator.current
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            ListOfIndicators(
-                numberOfPages = currentUserStoriesList.size,
-                pauseStory = pauseStory,
-                onEveryStoryChange = {
-                    onEveryStoryChange.invoke(it)
-                },
-                changedPage = currentPage,
-                storyDownloaded = storyDownloaded,
-                onComplete = onComplete
-            )
-        }
-
-        Spacer(Modifier.height(14.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = {
-                navigator?.pop()
-            }) {
-                Icon(
-                    painter = painterResource("ic_back.xml"),
-                    modifier = Modifier.size(22.dp),
-                    tint = Color.White,
-                    contentDescription = ""
-                )
-            }
-
-            currentUserStoryMain?.profilePic?.let { asyncPainterResource(it) }
-                ?.let {
-                    KamelImage(
-                        resource = it,
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop,
+                    Box(
                         modifier = Modifier
-                            .size(24.dp)
-                            .clip(CircleShape)
+                            .fillMaxWidth()
+                            .height(100.dp)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Black.copy(alpha = 0.8f),
+                                        Color.Transparent
+                                    )
+                                )
+                            )
                     )
+
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            ListOfIndicators(
+                                numberOfPages = currentUserStoriesList.size,
+                                pauseStory = pauseStory,
+                                onEveryStoryChange = {
+                                    scope.launch {
+                                        currentPage = it
+                                        storiesPagerState.scrollToPage(it)
+                                    }
+                                },
+                                changedPage = currentPage,
+                                storyDownloaded = storyDownloaded,
+                                onComplete = {
+                                    scope.launch {
+                                        pagerState.animateScrollToPage(currentPagingIndex + 1)
+                                    }
+                                }
+                            )
+                        }
+
+                        Spacer(Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton( onClick = {
+                                navigator?.pop()
+                            }){
+                                Icon(painter = painterResource("ic_back.xml"), modifier = Modifier.size(22.dp), tint = Color.White, contentDescription = "")
+                            }
+
+                            currentUserStoryMain?.profilePic?.let { asyncPainterResource(it) }
+                                ?.let {
+                                    KamelImage(
+                                        resource = it,
+                                        contentDescription = "",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clip(CircleShape)
+                                    )
+                                }
+                            Spacer(Modifier.width(8.dp))
+                            currentUserStoryMain?.userName?.let {
+                                Text(text = it, color = Color.White, fontSize = 12.sp)
+                            }
+                            Spacer(Modifier.width(8.dp))
+                            currentStoryItem?.time?.let {
+                                Text(
+                                    text = it,
+                                    color = Color.White,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
                 }
-            Spacer(Modifier.width(8.dp))
-            currentUserStoryMain?.userName?.let {
-                Text(text = it, color = Color.White, fontSize = 12.sp)
-            }
-            Spacer(Modifier.width(8.dp))
-            currentStoryItem?.time?.let {
-                Text(
-                    text = it,
-                    color = Color.White,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                    fontSize = 12.sp
-                )
+                StoryReplyView()
             }
         }
     }
@@ -439,12 +369,12 @@ fun LinearIndicator(modifier: Modifier,
                     storyDownloaded: Boolean = false,
                     onAnimationEnd: () -> Unit) {
 
+    val updatedCurrentPage = rememberUpdatedState(currentPage)
+    val updatedIndex = rememberUpdatedState(index)
+
     var progress by remember {
         mutableStateOf(0f)
     }
-
-    val updatedCurrentPage = rememberUpdatedState(currentPage)
-    val updatedIndex = rememberUpdatedState(index)
 
     val isDownloaded = rememberUpdatedState(storyDownloaded)
 
