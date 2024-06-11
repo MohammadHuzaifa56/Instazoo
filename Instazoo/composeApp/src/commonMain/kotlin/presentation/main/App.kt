@@ -1,5 +1,8 @@
 package presentation.main
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +14,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import cafe.adriel.voyager.navigator.tab.CurrentTab
@@ -27,20 +34,29 @@ fun App() {
         modules(appModule())
     }) {
         InstazooTheme {
-            TabNavigator(HomeTab) {
+            var isVisible by remember { mutableStateOf(true) }
+            val homeTab = remember {
+                HomeTab(
+                    onNavigator = { isVisible = it }
+                )
+            }
+
+            TabNavigator(homeTab) {
                 Scaffold(bottomBar = {
-                    BottomNavigation(
-                        modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = MaterialTheme.colors.background
-                    ) {
-                        TabNavigationItem(HomeTab)
-                        TabNavigationItem(SearchTab)
-                        TabNavigationItem(AddTab)
-                        TabNavigationItem(ReelsTab)
-                        TabNavigationItem(ProfileTab)
+                    AnimatedVisibility(visible = isVisible) {
+                        BottomNavigation(
+                            modifier = Modifier.fillMaxWidth(),
+                            backgroundColor = MaterialTheme.colors.background
+                        ) {
+                            TabNavigationItem(homeTab)
+                            TabNavigationItem(SearchTab)
+                            TabNavigationItem(AddTab)
+                            TabNavigationItem(ReelsTab)
+                            TabNavigationItem(ProfileTab)
+                        }
                     }
                 }) {
-                    Box(Modifier.padding(it)){
+                    Box(Modifier.padding(it)) {
                         CurrentTab()
                     }
                 }
@@ -57,8 +73,8 @@ fun App() {
 
 @Composable
 private fun RowScope.TabNavigationItem(tab: Tab) {
-    val tabNavigator = LocalTabNavigator.current
 
+    val tabNavigator = LocalTabNavigator.current
     BottomNavigationItem(
         selected = tabNavigator.current == tab,
         onClick = { tabNavigator.current = tab},

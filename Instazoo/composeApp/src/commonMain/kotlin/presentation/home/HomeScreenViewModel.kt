@@ -2,28 +2,21 @@ package presentation.home
 
 import data.model.CommentItem
 import data.model.FeedPost
-import data.model.StoryItem
 import data.remote.Resource
 import data.repository.HomeRepository
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import presentation.stories.StoriesUIState
 
 data class FeedPostsUIState(
     val isLoading: Boolean = false,
     val postsList: List<FeedPost>?= null,
-    val error: String? = null
-)
-
-data class StoriesUIState(
-    val isLoading: Boolean = false,
-    val storiesList: List<StoryItem>?= null,
     val error: String? = null
 )
 
@@ -47,7 +40,7 @@ class HomeScreenViewModel: ViewModel(), KoinComponent {
     init {
         viewModelScope.launch {
             val feedPosts = async { homeRepository.getFeedPosts() }
-            val storyItems = async { homeRepository.getStories() }
+            val storyItems = async { homeRepository.getMainStoriesList() }
             feedPosts.await().collect { result ->
                 when (result) {
                     is Resource.Loading -> _postUiState.update {
@@ -81,7 +74,7 @@ class HomeScreenViewModel: ViewModel(), KoinComponent {
                     is Resource.Loading -> _storyUiState.update {
                         StoriesUIState(
                             isLoading = true,
-                            storiesList = null,
+                            mainStoriesList = null,
                             error = null
                         )
                     }
@@ -89,7 +82,7 @@ class HomeScreenViewModel: ViewModel(), KoinComponent {
                     is Resource.Success -> _storyUiState.update {
                         StoriesUIState(
                             isLoading = false,
-                            storiesList = result.data ?: emptyList(),
+                            mainStoriesList = result.data ?: emptyList(),
                             error = null,
                         )
                     }
@@ -97,7 +90,7 @@ class HomeScreenViewModel: ViewModel(), KoinComponent {
                     is Resource.Error -> _storyUiState.update {
                         StoriesUIState(
                             isLoading = false,
-                            storiesList = null,
+                            mainStoriesList = null,
                             error = result.message,
                         )
                     }

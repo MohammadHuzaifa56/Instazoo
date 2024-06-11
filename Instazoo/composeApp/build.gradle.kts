@@ -69,6 +69,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.tabNavigator)
+            implementation(libs.voyager.transitions)
             implementation(libs.moko.mvvm.core)
             implementation(libs.moko.mvvm.compose)
             implementation(libs.koin.core)
@@ -90,6 +91,8 @@ kotlin {
             implementation(libs.sql.delight)
         }
     }
+
+    task("testClasses")
 }
 
 android {
