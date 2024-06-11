@@ -13,6 +13,7 @@ Instazoo KMP is a clone of Instagram built with Compose Multiplatform. This app 
 
 - Posts in a feed format with options to like, comment, and share.
 - A horizontal list of stories on the home screen.
+- User Stories view displays all user stories and allows seamless transition between them. 
 - Comments on each post can be viewed by opening the bottom sheet.
 - The bottom navigation bar lets you switch between different app sections.
 - The search section displays a staggered view of random items by default.
