@@ -38,37 +38,6 @@ class StoriesMainViewModel: ViewModel(), KoinComponent {
         }
     }
 
-    suspend fun getUserStory(userId: Int) {
-        val response = homeRepository.getSingleStory(userId)
-        response.collect { result ->
-            when (result) {
-                is Resource.Error -> _singleUserStoryUIState.update {
-                    SingleUserStoryUIState(
-                        isLoading = false,
-                        userStory = null,
-                        error = result.message
-                    )
-                }
-
-                is Resource.Loading -> _singleUserStoryUIState.update {
-                    SingleUserStoryUIState(
-                        isLoading = true,
-                        userStory = null,
-                        error = null
-                    )
-                }
-
-                is Resource.Success -> _singleUserStoryUIState.update {
-                    SingleUserStoryUIState(
-                        isLoading = false,
-                        userStory = result.data,
-                        error = null
-                    )
-                }
-            }
-        }
-    }
-
     private suspend fun getAllUserStories() {
         val response = homeRepository.getStories()
         response.collect { result ->

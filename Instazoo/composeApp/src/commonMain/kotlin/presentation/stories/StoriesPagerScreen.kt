@@ -81,7 +81,7 @@ import presentation.utils.InstaLoadingProgress
 import kotlin.math.absoluteValue
 import kotlin.math.min
 
-class StoriesPagerScreen(val userId: Int): Screen {
+class StoriesPagerScreen(val userId: Int) : Screen {
     @Composable
     override fun Content() {
         StoriesMainScreen(userId)
@@ -98,7 +98,7 @@ fun StoriesMainScreen(userId: Int, storiesMainViewModel: StoriesMainViewModel = 
     val pagerState = rememberPagerState(
         initialPageOffsetFraction = 0f,
     ) {
-        storiesListState.mainStoriesList?.size?:0
+        storiesListState.mainStoriesList?.size ?: 0
     }
 
     LaunchedEffect(storiesListState) {
@@ -215,7 +215,9 @@ fun StoriesMainScreen(userId: Int, storiesMainViewModel: StoriesMainViewModel = 
                                         currentPage--
                                         storiesPagerState.animateScrollToPage(currentPage)
                                     } else if (pagerState.currentPage - 1 > 0) {
-                                        currentPage = storiesListState.mainStoriesList?.get(currentPagingIndex - 1)?.storiesList?.size ?: 0
+                                        currentPage =
+                                            storiesListState.mainStoriesList?.get(currentPagingIndex - 1)?.storiesList?.size
+                                                ?: 0
                                         pagerState.animateScrollToPage(pagerState.currentPage - 1)
                                     }
                                 }
@@ -321,10 +323,15 @@ fun StoriesMainScreen(userId: Int, storiesMainViewModel: StoriesMainViewModel = 
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            IconButton( onClick = {
+                            IconButton(onClick = {
                                 navigator?.pop()
-                            }){
-                                Icon(painter = painterResource("ic_back.xml"), modifier = Modifier.size(22.dp), tint = Color.White, contentDescription = "")
+                            }) {
+                                Icon(
+                                    painter = painterResource("ic_back.xml"),
+                                    modifier = Modifier.size(22.dp),
+                                    tint = Color.White,
+                                    contentDescription = ""
+                                )
                             }
 
                             currentUserStoryMain?.profilePic?.let { asyncPainterResource(it) }
@@ -361,13 +368,15 @@ fun StoriesMainScreen(userId: Int, storiesMainViewModel: StoriesMainViewModel = 
 }
 
 @Composable
-fun LinearIndicator(modifier: Modifier,
-                    onPauseTimer: Boolean = false,
-                    hideIndicators: Boolean = false,
-                    currentPage: Int = 0,
-                    index: Int = 0,
-                    storyDownloaded: Boolean = false,
-                    onAnimationEnd: () -> Unit) {
+fun LinearIndicator(
+    modifier: Modifier,
+    onPauseTimer: Boolean = false,
+    hideIndicators: Boolean = false,
+    currentPage: Int = 0,
+    index: Int = 0,
+    storyDownloaded: Boolean = false,
+    onAnimationEnd: () -> Unit
+) {
 
     val updatedCurrentPage = rememberUpdatedState(currentPage)
     val updatedIndex = rememberUpdatedState(index)
@@ -378,9 +387,9 @@ fun LinearIndicator(modifier: Modifier,
 
     val isDownloaded = rememberUpdatedState(storyDownloaded)
 
-    val startProgress by remember{
-        derivedStateOf{
-            (updatedIndex.value == updatedCurrentPage.value)  && isDownloaded.value
+    val startProgress by remember {
+        derivedStateOf {
+            (updatedIndex.value == updatedCurrentPage.value) && isDownloaded.value
         }
     }
 
@@ -467,7 +476,12 @@ private fun RowScope.ListOfIndicators(
 
 @Stable
 @Composable
-fun StoryImageView(modifier: Modifier = Modifier, storyItem: StoryItem?, onLoading: () -> Unit, onComplete: () -> Unit) {
+fun StoryImageView(
+    modifier: Modifier = Modifier,
+    storyItem: StoryItem?,
+    onLoading: () -> Unit,
+    onComplete: () -> Unit
+) {
     val painterResource = asyncPainterResource(
         storyItem?.sourceUrl.orEmpty(),
         filterQuality = FilterQuality.None,
@@ -489,17 +503,26 @@ fun StoryImageView(modifier: Modifier = Modifier, storyItem: StoryItem?, onLoadi
         )
     }
 
-    when(painterResource){
+    when (painterResource) {
         is Resource.Failure -> {}
-        is Resource.Loading -> {onLoading()}
-        is Resource.Success -> {onComplete()}
+        is Resource.Loading -> {
+            onLoading()
+        }
+
+        is Resource.Success -> {
+            onComplete()
+        }
     }
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun StoryReplyView() {
-    Row(modifier = Modifier.fillMaxWidth().background(Color.Black).padding(8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    Row(
+        modifier = Modifier.fillMaxWidth().background(Color.Black).padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         OutlinedTextField(
             value = "Search",
             onValueChange = {},
@@ -513,11 +536,22 @@ fun StoryReplyView() {
                 focusedContainerColor = Color.Transparent,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
-            ))
+            )
+        )
 
-        Icon(painter = painterResource("ic_heart_like.xml"), contentDescription = "", tint = Color.White, modifier = Modifier.size(24.dp))
+        Icon(
+            painter = painterResource("ic_heart_like.xml"),
+            contentDescription = "",
+            tint = Color.White,
+            modifier = Modifier.size(24.dp)
+        )
 
-        Icon(painter = painterResource("ic_share.xml"), contentDescription = "", tint = Color.White, modifier = Modifier.size(24.dp))
+        Icon(
+            painter = painterResource("ic_share.xml"),
+            contentDescription = "",
+            tint = Color.White,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }
 

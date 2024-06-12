@@ -97,7 +97,7 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     }, modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)) {
         ModalBottomSheetLayout(
             sheetContent = {
-               CommentsSheetView(homeViewModel)
+                CommentsSheetView(homeViewModel)
             },
             sheetState = sheetState,
             sheetShape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
@@ -169,7 +169,7 @@ fun StoryItemView(storyItem: UserStory?) {
                         ),
                         shape = CircleShape
                     ).clickable {
-                        navigator.push(StoriesPagerScreen(userId = storyItem?.userId?.toInt()?:0))
+                        navigator.push(StoriesPagerScreen(userId = storyItem?.userId?.toInt() ?: 0))
                     }
             )
             KamelImage(
@@ -191,7 +191,7 @@ fun StoryItemView(storyItem: UserStory?) {
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun ImageItem(postItem: FeedPost, openComments: ()-> Unit) {
+fun ImageItem(postItem: FeedPost, openComments: () -> Unit) {
     var isLiked by remember {
         mutableStateOf(false)
     }
