@@ -75,6 +75,8 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.annotation)
+            implementation(libs.compose.adaptive)
+//            implementation(libs.compose.adaptive.layout)
             //implementation(libs.sql.delight)
             implementation(libs.sql.delight.coroutines)
         }
