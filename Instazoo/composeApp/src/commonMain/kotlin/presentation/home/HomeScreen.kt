@@ -40,6 +40,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -102,7 +105,7 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
             sheetState = sheetState,
             sheetShape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
         ) {
-            LazyColumn(modifier = Modifier.fillMaxSize())
+            LazyColumn(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally)
             {
                 item {
                     storiesUIState.mainStoriesList?.let {
@@ -189,7 +192,7 @@ fun StoryItemView(storyItem: UserStory?) {
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun ImageItem(postItem: FeedPost, openComments: () -> Unit) {
     var isLiked by remember {
@@ -206,7 +209,9 @@ fun ImageItem(postItem: FeedPost, openComments: () -> Unit) {
         }
     }
 
-    Column(modifier = Modifier.padding(6.dp)) {
+    val isExpanded = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Expanded
+
+    Column(modifier = Modifier.padding(6.dp).then(if (isExpanded) Modifier.width(500.dp) else Modifier)) {
         Box {
             KamelImage(
                 resource = asyncPainterResource(postItem.postImage.orEmpty()),
