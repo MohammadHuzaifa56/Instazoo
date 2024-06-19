@@ -78,7 +78,9 @@ import presentation.stories.StoriesPagerScreen
 import presentation.utils.InstaLoadingProgress
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3WindowSizeClassApi::class
+)
 @Composable
 fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val feedPostsUIState by homeViewModel.postsUiStateFlow.collectAsState()
@@ -87,16 +89,19 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val isExpanded = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Expanded
 
     Scaffold(backgroundColor = MaterialTheme.colors.background, topBar = {
-        TopAppBar(
-            title = {
-                Text("Instazoo", fontSize = 22.sp, color = MaterialTheme.colors.primary)
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colors.background,
-                scrolledContainerColor = MaterialTheme.colors.background
-            ), scrollBehavior = scrollBehavior
-        )
+        if (isExpanded.not()) {
+            TopAppBar(
+                title = {
+                    Text("Instazoo", fontSize = 22.sp, color = MaterialTheme.colors.primary)
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colors.background,
+                    scrolledContainerColor = MaterialTheme.colors.background
+                ), scrollBehavior = scrollBehavior
+            )
+        }
     }, modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)) {
         ModalBottomSheetLayout(
             sheetContent = {
