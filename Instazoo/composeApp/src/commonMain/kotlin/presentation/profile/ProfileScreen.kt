@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -25,6 +27,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,10 +49,11 @@ import io.kamel.image.asyncPainterResource
 import org.koin.compose.koinInject
 import presentation.utils.InstaLoadingProgress
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun ProfileScreen(profileScreenViewModel: ProfileScreenViewModel = koinInject()) {
     val profileUIState by profileScreenViewModel.profileUIState.collectAsState()
+
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
             title = {
@@ -80,8 +86,14 @@ fun ProfileScreen(profileScreenViewModel: ProfileScreenViewModel = koinInject())
     }
 }
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun AccountDetailMainView(accountDetail: AccountDetail) {
+
+    val widthSizeClass = calculateWindowSizeClass().widthSizeClass
+    val isCompact = widthSizeClass == WindowWidthSizeClass.Compact
+    val itemsSpacing = if (isCompact) 1.dp else 8.dp
+
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
         KamelImage(
             resource = asyncPainterResource(accountDetail.profile_pic),
@@ -91,6 +103,10 @@ fun AccountDetailMainView(accountDetail: AccountDetail) {
                 CircleShape
             )
         )
+
+        if (isCompact.not()){
+            Spacer(Modifier.weight(3f))
+        }
 
         Spacer(Modifier.weight(0.5f))
         VerticalDoubleText(accountDetail.posts.toString(), "Posts", modifier = Modifier.weight(1f))
@@ -126,11 +142,15 @@ fun AccountDetailMainView(accountDetail: AccountDetail) {
     }
 
     Spacer(Modifier.height(20.dp))
-    LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(1.dp), horizontalArrangement = Arrangement.spacedBy(1.dp),
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(itemsSpacing),
+        horizontalArrangement = Arrangement.spacedBy(itemsSpacing),
         state = rememberLazyGridState()
-    ){
-        items(accountDetail.feeds){
+    ) {
+        items(accountDetail.feeds) {
             ImageItemView(it)
         }
     }
@@ -142,7 +162,7 @@ fun ImageItemView(feed: Feed) {
             resource = asyncPainterResource(feed.image_url),
             contentDescription = "",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier.width(170.dp).aspectRatio(1f),
             onLoading = {
                 InstaLoadingProgress(progress = it)
             }
@@ -151,6 +171,7 @@ fun ImageItemView(feed: Feed) {
 
 @Composable
 fun VerticalDoubleText(firstText: String, secondText: String, modifier: Modifier) {
+
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = firstText, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
         Text(text = secondText, fontSize = 14.sp)

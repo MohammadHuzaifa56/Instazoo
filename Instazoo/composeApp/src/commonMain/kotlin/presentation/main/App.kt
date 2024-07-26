@@ -1,10 +1,9 @@
 package presentation.main
 
+import InstaPrimaryColor
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,15 +19,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
@@ -58,8 +54,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -135,7 +129,7 @@ fun App() {
                                 label = {
                                     Text(text = "Home", fontSize = 14.sp)
                                 },
-                                selectedContentColor = Color.Red,
+                                selectedContentColor = InstaPrimaryColor,
                                 onClick = {
                                     selectedTab.value = 0
                                 }
@@ -153,7 +147,7 @@ fun App() {
                                     Text(text = "Search", fontSize = 14.sp)
                                 },
 
-                                selectedContentColor = Color.Red,
+                                selectedContentColor = InstaPrimaryColor,
                                 onClick = {
                                     selectedTab.value = 1
                                 }
@@ -170,7 +164,7 @@ fun App() {
                                 label = {
                                     Text(text = "Add", fontSize = 14.sp)
                                 },
-                                selectedContentColor = Color.Red,
+                                selectedContentColor = InstaPrimaryColor,
                                 onClick = {
                                     selectedTab.value = 2
                                 }
@@ -187,7 +181,7 @@ fun App() {
                                 label = {
                                     Text(text = "Reels", fontSize = 14.sp)
                                 },
-                                selectedContentColor = Color.Red,
+                                selectedContentColor = InstaPrimaryColor,
                                 onClick = {
                                     selectedTab.value = 3
                                 }
@@ -206,7 +200,7 @@ fun App() {
                                     Text(text = "Profile", fontSize = 14.sp)
                                 },
                                 alwaysShowLabel = false,
-                                selectedContentColor = Color.Red,
+                                selectedContentColor = InstaPrimaryColor,
                                 onClick = {
                                     selectedTab.value = 4
                                 }
@@ -220,8 +214,7 @@ fun App() {
                                 ), verticalArrangement = Arrangement.spacedBy(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
 
                             Spacer(Modifier.height(20.dp))
-                            Text("Instazoo", fontSize = 22.sp, color = MaterialTheme.colors.primary)
-                            Spacer(Modifier.height(20.dp))
+                            Text("Instazoo", modifier = Modifier.padding(20.dp), fontSize = 22.sp, color = MaterialTheme.colors.primary)
                             Divider(Modifier.fillMaxWidth(), color = Color.DarkGray, thickness = 1.dp)
                             NavigationExpandedItem(
                                 isSelected = selectedTab.value == 0,
@@ -356,11 +349,11 @@ fun NavigationExpandedItem(
     val interactionSource = remember { MutableInteractionSource() }
 
     val backgroundColor by animateColorAsState(
-        targetValue = if (isSelected) Color.Red else Color.White,
+        targetValue = if (isSelected) InstaPrimaryColor else Color.White,
         animationSpec = tween(300, easing = LinearOutSlowInEasing)
     )
 
-    val itemColor by animateColorAsState(targetValue = if (isSelected) Color.Red else Color.Black)
+    val itemColor by animateColorAsState(targetValue = if (isSelected) InstaPrimaryColor else Color.Black)
 
     Row(
         Modifier.fillMaxWidth().wrapContentHeight()

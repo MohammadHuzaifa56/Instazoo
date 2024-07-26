@@ -1,5 +1,6 @@
 package presentation.stories
 
+import InstaPrimaryColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -7,8 +8,8 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -178,14 +179,22 @@ fun StoriesMainScreen(userId: Int, storiesMainViewModel: StoriesMainViewModel = 
                         if (widthSizeClass == WindowWidthSizeClass.Medium) Modifier.weight(
                             0.2f
                         ) else Modifier.weight(0.3f)
-                    ).background(Color.LightGray)
+                    ).background(Color.LightGray),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(it) {
                         StoryNavItemView(
                             userStory = it,
                             isSelected = it?.userId == currentUserStoryMain?.userId,
                             isExpanded = widthSizeClass == WindowWidthSizeClass.Expanded
-                        )
+                        ) { selectedId ->
+                            currentPagingIndex =
+                                storiesListState.mainStoriesList?.indexOfFirst { it?.userId == selectedId }
+                                    ?: 0
+                            scope.launch {
+                                pagerState.scrollToPage(currentPagingIndex)
+                            }
+                        }
                     }
                 }
             }
@@ -605,11 +614,14 @@ fun StoryReplyView() {
 }
 
 @Composable
-fun StoryNavItemView(userStory: UserStory?, isSelected: Boolean, isExpanded: Boolean) {
+fun StoryNavItemView(userStory: UserStory?, isSelected: Boolean, isExpanded: Boolean, onUserStorySelect: (Long) -> Unit) {
     val selected = rememberUpdatedState(isSelected)
-    val selectedColor by animateColorAsState(if (selected.value) Color.Red else Color.Transparent)
+    val selectedColor by animateColorAsState(if (selected.value) InstaPrimaryColor else Color.Transparent)
     Row(
-        Modifier.fillMaxSize().background(selectedColor).padding(8.dp),
+        Modifier.fillMaxSize().background(selectedColor).padding(8.dp).clickable {
+            userStory?.userId?.let { onUserStorySelect.invoke(it) }
+        },
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         KamelImage(

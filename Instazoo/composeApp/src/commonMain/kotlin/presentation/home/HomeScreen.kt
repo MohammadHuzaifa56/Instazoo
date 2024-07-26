@@ -226,7 +226,7 @@ fun ImageItem(postItem: FeedPost, openComments: () -> Unit) {
                     InstaLoadingProgress(progress = progress)
                 },
 
-                modifier = Modifier.fillMaxWidth().aspectRatio(0.7f)
+                modifier = Modifier.fillMaxWidth().aspectRatio(0.8f)
             )
 
             Row(
