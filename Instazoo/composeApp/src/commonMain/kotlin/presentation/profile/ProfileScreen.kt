@@ -49,7 +49,7 @@ import io.kamel.image.asyncPainterResource
 import org.koin.compose.koinInject
 import presentation.utils.InstaLoadingProgress
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(profileScreenViewModel: ProfileScreenViewModel = koinInject()) {
     val profileUIState by profileScreenViewModel.profileUIState.collectAsState()
@@ -93,19 +93,21 @@ fun AccountDetailMainView(accountDetail: AccountDetail) {
     val widthSizeClass = calculateWindowSizeClass().widthSizeClass
     val isCompact = widthSizeClass == WindowWidthSizeClass.Compact
     val itemsSpacing = if (isCompact) 1.dp else 8.dp
+    val imageSize = if (isCompact) 80.dp else 150.dp
 
     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
         KamelImage(
             resource = asyncPainterResource(accountDetail.profile_pic),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.size(80.dp).clip(
+            modifier = Modifier.size(imageSize).clip(
                 CircleShape
             )
         )
 
+
         if (isCompact.not()){
-            Spacer(Modifier.weight(3f))
+             BioInfo(modifier = Modifier.weight(2f), accountDetail)
         }
 
         Spacer(Modifier.weight(0.5f))
@@ -120,14 +122,19 @@ fun AccountDetailMainView(accountDetail: AccountDetail) {
 
     }
 
+    if (isCompact) {
+        BioInfo(accountDetail = accountDetail)
+    }
 
-    Text(text = accountDetail.profile_name, modifier = Modifier.padding(start = 10.dp, top = 6.dp), fontSize = 14.sp, fontWeight = FontWeight.Bold)
-    Spacer(Modifier.height(2.dp))
-    Text(text = accountDetail.bio, fontSize = 12.sp,
-        modifier = Modifier.padding(start = 10.dp), color = MaterialTheme.colors.onPrimary, fontWeight = FontWeight.Normal)
-
-    Spacer(Modifier.height(10.dp))
+    if (isCompact.not()) {
+        Spacer(Modifier.height(10.dp))
+    }
     Row(modifier = Modifier.padding(16.dp),horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+
+        if (isCompact.not()) {
+            Spacer(Modifier.weight(2f))
+        }
+
         androidx.compose.material3.Button(modifier = Modifier.weight(1f), shape = RoundedCornerShape(8.dp), colors = ButtonDefaults.textButtonColors(
             containerColor = MaterialTheme.colors.surface
         ), onClick = {}){
@@ -157,17 +164,37 @@ fun AccountDetailMainView(accountDetail: AccountDetail) {
 }
 
 @Composable
-fun ImageItemView(feed: Feed) {
-        KamelImage(
-            resource = asyncPainterResource(feed.image_url),
-            contentDescription = "",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.width(170.dp).aspectRatio(1f),
-            onLoading = {
-                InstaLoadingProgress(progress = it)
-            }
+fun BioInfo(modifier: Modifier = Modifier, accountDetail: AccountDetail) {
+    Column(modifier = modifier) {
+        Text(
+            text = accountDetail.profile_name,
+            modifier = Modifier.padding(start = 10.dp, top = 6.dp),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(Modifier.height(2.dp))
+        Text(
+            text = accountDetail.bio,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(start = 10.dp),
+            color = MaterialTheme.colors.onPrimary,
+            fontWeight = FontWeight.Normal
         )
     }
+}
+
+@Composable
+fun ImageItemView(feed: Feed) {
+    KamelImage(
+        resource = asyncPainterResource(feed.image_url),
+        contentDescription = "",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.width(170.dp).aspectRatio(1f),
+        onLoading = {
+            InstaLoadingProgress(progress = it)
+        }
+    )
+}
 
 @Composable
 fun VerticalDoubleText(firstText: String, secondText: String, modifier: Modifier) {
