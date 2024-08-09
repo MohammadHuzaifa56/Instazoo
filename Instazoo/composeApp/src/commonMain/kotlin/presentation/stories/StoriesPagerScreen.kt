@@ -622,13 +622,12 @@ fun StoryNavItemView(userStory: UserStory?, isSelected: Boolean, isExpanded: Boo
             userStory?.userId?.let { onUserStorySelect.invoke(it) }
         },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
     ) {
         KamelImage(
             resource = asyncPainterResource(userStory?.profilePic.orEmpty()),
             contentDescription = "",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(60.dp).clip(CircleShape)
+            modifier = Modifier.padding(20.dp).size(60.dp).clip(CircleShape)
         )
 
 
