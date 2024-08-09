@@ -40,6 +40,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -75,7 +78,9 @@ import presentation.stories.StoriesPagerScreen
 import presentation.utils.InstaLoadingProgress
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3WindowSizeClassApi::class
+)
 @Composable
 fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val feedPostsUIState by homeViewModel.postsUiStateFlow.collectAsState()
@@ -84,16 +89,19 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val isExpanded = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Expanded
 
     Scaffold(backgroundColor = MaterialTheme.colors.background, topBar = {
-        TopAppBar(
-            title = {
-                Text("Instazoo", fontSize = 22.sp, color = MaterialTheme.colors.primary)
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colors.background,
-                scrolledContainerColor = MaterialTheme.colors.background
-            ), scrollBehavior = scrollBehavior
-        )
+        if (isExpanded.not()) {
+            TopAppBar(
+                title = {
+                    Text("Instazoo", fontSize = 22.sp, color = MaterialTheme.colors.primary)
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colors.background,
+                    scrolledContainerColor = MaterialTheme.colors.background
+                ), scrollBehavior = scrollBehavior
+            )
+        }
     }, modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)) {
         ModalBottomSheetLayout(
             sheetContent = {
@@ -102,7 +110,7 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
             sheetState = sheetState,
             sheetShape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
         ) {
-            LazyColumn(modifier = Modifier.fillMaxSize())
+            LazyColumn(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally)
             {
                 item {
                     storiesUIState.mainStoriesList?.let {
@@ -189,7 +197,7 @@ fun StoryItemView(storyItem: UserStory?) {
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun ImageItem(postItem: FeedPost, openComments: () -> Unit) {
     var isLiked by remember {
@@ -206,7 +214,9 @@ fun ImageItem(postItem: FeedPost, openComments: () -> Unit) {
         }
     }
 
-    Column(modifier = Modifier.padding(6.dp)) {
+    val isExpanded = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Expanded
+
+    Column(modifier = Modifier.padding(6.dp).then(if (isExpanded) Modifier.width(500.dp) else Modifier)) {
         Box {
             KamelImage(
                 resource = asyncPainterResource(postItem.postImage.orEmpty()),
@@ -216,7 +226,7 @@ fun ImageItem(postItem: FeedPost, openComments: () -> Unit) {
                     InstaLoadingProgress(progress = progress)
                 },
 
-                modifier = Modifier.fillMaxWidth().aspectRatio(0.7f)
+                modifier = Modifier.fillMaxWidth().aspectRatio(0.8f)
             )
 
             Row(
