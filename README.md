@@ -1,6 +1,6 @@
 # Instazoo KMP App - An Instagram Clone Built with Compose Multiplatform
 
-[![Instazoo KMP App Preview](Instazoo/screenshots/Instazoo-KMP-app.png)](https://youtu.be/D9Qnz9lglu0)
+[![Instazoo KMP App Preview](Instazoo/screenshots/Instazoo-banner-image.png)](https://youtu.be/D9Qnz9lglu0)
 Click the image above to watch a YouTube demo of the Instazoo KMP App.
 
 ## Overview
