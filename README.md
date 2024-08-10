@@ -4,24 +4,25 @@
 Click the image above to watch a YouTube demo of the Instazoo KMP App.
 
 ## Overview
-Instazoo KMP is a clone of Instagram built with Compose Multiplatform. This app supports Android, iOS, and desktop platforms. The app fetches data from a static API hosted on GitHub Pages. The primary purpose of this app is to provide a hands-on experience with KMP Compose Multiplatform.
+Instazoo KMP is a clone of Instagram built with Compose Multiplatform. This project supports Android, iOS, and desktop platforms and fetches data from a static API hosted on GitHub Pages. The primary purpose of this project is to provide a hands-on experience with KMP Compose Multiplatform.
 
 > **Note:**
 > This app is still under development.
 
 ## Features
 
-- Posts in a feed format with options to like, comment, and share.
-- A horizontal list of stories on the home screen.
-- User Stories view displays all user stories and allows seamless transition between them. 
-- Comments on each post can be viewed by opening the bottom sheet.
-- The bottom navigation bar lets you switch between different app sections.
-- The search section displays a staggered view of random items by default.
-- The app has responsive loading for each request and image loading.
-- User data such as name, bio, profile picture, followers, followings, and posts can be viewed.
-- The profile screen displays user posts in a grid format.
-- Custom Fonts
-- Adjust both dark and light themes for better user experience.
+- The feed displays posts with like, comment, and share options.
+- A horizontal list of stories appears at the top of the home screen.
+- The User Stories view enables smooth transitions between different stories.
+- Comments on posts can be accessed through a sliding bottom sheet.
+- A bottom navigation bar allows users to switch between various app sections.
+- The search section features a staggered grid layout showcasing random items by default.
+- The app supports responsive loading for requests and images, enhancing performance.
+- User profiles display details such as name, bio, profile picture, followers, followings, and posts.
+- The profile screen presents user posts in a grid layout.
+- Custom fonts are used throughout the app for a unique visual style.
+- Both dark and light themes are available to enhance user experience.
+- The app supports adaptive design for both mobile and desktop interfaces.
 
 # Technologies:
 
@@ -42,6 +43,6 @@ Instazoo KMP is a clone of Instagram built with Compose Multiplatform. This app 
 - [kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines) - Library support for Kotlin coroutines with
   multiplatform support.
 - [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) - Provides sets of libraries for various
-  serialization formats eg. JSON, protocol buffers, CBOR etc.
+  serialization formats eg. JSON, protocol buffers, CBOR, etc.
 - [Voyager](https://voyager.adriel.cafe/) - A Multiplatform navigation library
 - [Kamel](https://github.com/Kamel-Media/Kamel) - Asynchronous media loading library for Compose Multiplatform
