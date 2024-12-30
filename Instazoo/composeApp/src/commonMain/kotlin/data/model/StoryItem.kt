@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StoryItem(
+    @SerialName("user_id")
+    var userId : Int? = null,
+
     @SerialName("user_name")
     var userName: String? = null,
 

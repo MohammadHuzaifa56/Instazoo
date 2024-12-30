@@ -53,6 +53,10 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
             implementation(libs.sql.delight.android)
+            implementation("androidx.media3:media3-exoplayer:1.1.0")
+            implementation("androidx.media3:media3-exoplayer-dash:1.1.0")
+            implementation("androidx.media3:media3-ui:1.1.0")
+            implementation("io.coil-kt:coil-compose:2.2.2")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -88,6 +92,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sql.delight)
+            implementation("uk.co.caprica:vlcj:4.7.0")
         }
     }
 }

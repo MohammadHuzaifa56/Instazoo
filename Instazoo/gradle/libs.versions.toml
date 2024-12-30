@@ -25,6 +25,7 @@ koin-compose = "1.1.2"
 koin_ksp_version = "1.3.0"
 ksp_version = "1.9.22-1.0.16"
 sql_delight_version = "2.0.0"
+media3version = "1.2.0"
 
 
 [libraries]
@@ -63,6 +64,7 @@ sql-delight-android = { module = "app.cash.sqldelight:android-driver", version.r
 sql-delight-ios = { module = "app.cash.sqldelight:native-driver", version.ref = "sql_delight_version" }
 sql-delight = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql_delight_version" }
 sql-delight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sql_delight_version" }
+videoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3version" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

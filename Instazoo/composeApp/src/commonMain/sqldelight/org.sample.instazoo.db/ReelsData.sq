@@ -1,0 +1,14 @@
+CREATE TABLE ReelsItemEntity (
+    title TEXT,
+    subtitle TEXT,
+    sources TEXT,
+    thumb TEXT
+);
+
+selectAllReels:
+SELECT *
+FROM ReelsItemEntity;
+
+insertReelsItem:
+INSERT INTO ReelsItemEntity(title, subtitle, sources, thumb)
+VALUES ?;

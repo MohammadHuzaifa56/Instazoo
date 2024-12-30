@@ -1,25 +1,30 @@
 package di
 
 import DatabaseDriverFactory
-import app.cash.sqldelight.Transacter
 import data.remote.InstazooAPI
 import data.repository.HomeRepository
 import data.repository.HomeRepositoryImpl
 import data.repository.profile.ProfileRepository
 import data.repository.profile.ProfileRepositoryImpl
+import data.repository.reels.ReelsRepository
+import data.repository.reels.ReelsRepositoryImpl
 import data.repository.search.SearchRepository
 import data.repository.search.SearchRepositoryImpl
 import db.FeedPosts.HomeScreenDb
+import db.ReelsData.ReelsDataDb
 import db.SearchPosts.SearchPostDb
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.http.ContentType
+import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 import org.sample.instazoo.db.InstaZooDatabase
 import presentation.home.HomeScreenViewModel
 import presentation.profile.ProfileScreenViewModel
+import presentation.reels.ReelsViewModel
 import presentation.search.SearchViewModel
-import kotlin.math.sin
 
 fun appModule() = module {
 
@@ -51,11 +56,22 @@ fun appModule() = module {
         SearchViewModel(get())
     }
 
+    single {
+        ReelsViewModel(get())
+    }
+
+    single<ReelsRepository> {
+        ReelsRepositoryImpl(get(), get())
+    }
 
     single<HttpClient> {
         HttpClient {
             install(ContentNegotiation) {
-                json()
+                register(ContentType.Application.Json, KotlinxSerializationConverter(Json {
+                    prettyPrint = true
+                    ignoreUnknownKeys = true
+                    explicitNulls = false
+                }))
             }
         }
     }
@@ -75,5 +91,9 @@ fun appModule() = module {
 
     single {
         HomeScreenDb(get())
+    }
+
+    single {
+        ReelsDataDb(get())
     }
 }

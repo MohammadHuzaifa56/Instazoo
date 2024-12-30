@@ -16,6 +16,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.home.HomeScreen
 import presentation.profile.ProfileScreen
+import presentation.reels.ReelsScreen
 import presentation.search.SearchScreen
 
 object HomeTab : Tab {
@@ -106,7 +107,7 @@ object ReelsTab : Tab {
 
     @Composable
     override fun Content() {
-
+        ReelsScreen()
     }
 }
 

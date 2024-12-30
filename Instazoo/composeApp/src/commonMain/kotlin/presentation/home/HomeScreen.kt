@@ -92,7 +92,7 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val scope = rememberCoroutineScope()
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(backgroundColor = MaterialTheme.colors.background, topBar = {
         TopAppBar(
