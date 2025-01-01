@@ -25,6 +25,9 @@ import presentation.home.HomeScreenViewModel
 import presentation.profile.ProfileScreenViewModel
 import presentation.reels.ReelsViewModel
 import presentation.search.SearchViewModel
+import presentation.stories.StoriesMainScreen
+import presentation.stories.StoriesMainViewModel
+import kotlin.math.sin
 
 fun appModule() = module {
 
@@ -34,6 +37,10 @@ fun appModule() = module {
 
     single<HomeScreenViewModel> {
         HomeScreenViewModel()
+    }
+
+    single<StoriesMainViewModel> {
+        StoriesMainViewModel()
     }
 
     single<ProfileScreenViewModel> {

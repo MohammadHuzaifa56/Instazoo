@@ -2,6 +2,8 @@ import androidx.compose.ui.graphics.Color
 
 
 val secondaryBlackColor = Color(0xFF202020)
+
+val InstaPrimaryColor = Color(0xFFC13584)
 sealed class InstaThemeColors(
     val main_background: Color,
     val main_surface: Color,

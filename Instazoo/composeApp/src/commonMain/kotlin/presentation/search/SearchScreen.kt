@@ -3,6 +3,7 @@ package presentation.search
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -26,10 +27,7 @@ import presentation.utils.shimmerEffect
 @Composable
 fun SearchScreen(searchViewModel: SearchViewModel = koinInject()) {
     val searchPosts by searchViewModel.searchPostUiState.collectAsState()
-
-    searchPosts.isLoading?.let {
-        SearchItemShimmerView(it)
-    }
+    SearchItemShimmerView(searchPosts.isLoading)
 
     searchPosts.searchPostsList?.let {searchList->
         Column(modifier = Modifier.fillMaxSize()){
@@ -51,9 +49,9 @@ fun SearchItemView(searchItem: SearchItem) {
         contentDescription = "",
         contentScale = ContentScale.Crop,
         modifier = Modifier.width(170.dp)
-            .height(if (searchItem.isSmall == true) 170.dp else 270.dp),
+            .aspectRatio(if (searchItem.isSmall == true) 1f else 0.6f),
         onLoading = {
-            InstaLoadingProgress(it)
+            InstaLoadingProgress(progress = it)
         }
     )
 }

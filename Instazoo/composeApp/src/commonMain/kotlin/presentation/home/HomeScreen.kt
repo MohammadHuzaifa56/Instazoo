@@ -35,12 +35,14 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.Typography
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -52,16 +54,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PointMode
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -69,22 +63,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import data.model.FeedPost
-import data.model.StoryItem
+import data.model.UserStory
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
-import presentation.main.InstazooTheme
+import presentation.stories.StoriesPagerScreen
 import presentation.utils.InstaLoadingProgress
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3WindowSizeClassApi::class
+)
 @Composable
 fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val feedPostsUIState by homeViewModel.postsUiStateFlow.collectAsState()
@@ -92,29 +88,33 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val scope = rememberCoroutineScope()
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val isExpanded = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Expanded
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(backgroundColor = MaterialTheme.colors.background, topBar = {
-        TopAppBar(
-            title = {
-                Text("Instazoo", fontSize = 22.sp, color = MaterialTheme.colors.primary)
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colors.background,
-                scrolledContainerColor = MaterialTheme.colors.background
-            ), scrollBehavior = scrollBehavior
-        )
+        if (isExpanded.not()) {
+            TopAppBar(
+                title = {
+                    Text("Instazoo", fontSize = 22.sp, color = MaterialTheme.colors.primary)
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colors.background,
+                    scrolledContainerColor = MaterialTheme.colors.background
+                ), scrollBehavior = scrollBehavior
+            )
+        }
     }, modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)) {
         ModalBottomSheetLayout(
             sheetContent = {
-               CommentsSheetView(homeViewModel)
+                CommentsSheetView(homeViewModel)
             },
             sheetState = sheetState,
             sheetShape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
         ) {
-            LazyColumn(modifier = Modifier.fillMaxSize())
+            LazyColumn(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally)
             {
                 item {
-                    storiesUIState.storiesList?.let {
+                    storiesUIState.mainStoriesList?.let {
                         LazyRow(modifier = Modifier.fillMaxWidth()) {
                             items(it) {
                                 StoryItemView(
@@ -144,7 +144,9 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
 
 
 @Composable
-fun StoryItemView(storyItem: StoryItem) {
+fun StoryItemView(storyItem: UserStory?) {
+    val navigator = LocalNavigator.currentOrThrow
+    val tabNavigator = LocalTabNavigator.current
     val linearEasingAngle by rememberInfiniteTransition().animateFloat(
         initialValue = 0f,
         targetValue = 1440f,
@@ -175,17 +177,19 @@ fun StoryItemView(storyItem: StoryItem) {
                             )
                         ),
                         shape = CircleShape
-                    )
+                    ).clickable {
+                        navigator.push(StoriesPagerScreen(userId = storyItem?.userId?.toInt() ?: 0))
+                    }
             )
             KamelImage(
-                resource = asyncPainterResource(storyItem.profilePic.orEmpty()),
+                resource = asyncPainterResource(storyItem?.profilePic.orEmpty()),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(60.dp).clip(CircleShape)
             )
         }
         Text(
-            text = storyItem.userName.orEmpty(),
+            text = storyItem?.userName.orEmpty(),
             modifier = Modifier.width(70.dp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -194,9 +198,9 @@ fun StoryItemView(storyItem: StoryItem) {
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun ImageItem(postItem: FeedPost, openComments: ()-> Unit) {
+fun ImageItem(postItem: FeedPost, openComments: () -> Unit) {
     var isLiked by remember {
         mutableStateOf(false)
     }
@@ -211,17 +215,19 @@ fun ImageItem(postItem: FeedPost, openComments: ()-> Unit) {
         }
     }
 
-    Column(modifier = Modifier.padding(6.dp)) {
+    val isExpanded = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Expanded
+
+    Column(modifier = Modifier.padding(6.dp).then(if (isExpanded) Modifier.width(500.dp) else Modifier)) {
         Box {
             KamelImage(
                 resource = asyncPainterResource(postItem.postImage.orEmpty()),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 onLoading = { progress ->
-                    InstaLoadingProgress(progress)
+                    InstaLoadingProgress(progress = progress)
                 },
 
-                modifier = Modifier.fillMaxWidth().aspectRatio(0.7f)
+                modifier = Modifier.fillMaxWidth().aspectRatio(0.8f)
             )
 
             Row(

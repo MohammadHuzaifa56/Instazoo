@@ -3,23 +3,25 @@ package presentation.main
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import cafe.adriel.voyager.transitions.SlideTransition
+import kotlinx.serialization.Transient
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import presentation.home.HomeScreen
+import presentation.home.HomeScreenMain
 import presentation.profile.ProfileScreen
 import presentation.reels.ReelsScreen
 import presentation.search.SearchScreen
 
-object HomeTab : Tab {
+class HomeTab(@Transient val onNavigator: (isRoot: Boolean) -> Unit) : Tab {
 
     override val options: TabOptions
         @Composable
@@ -38,7 +40,12 @@ object HomeTab : Tab {
 
     @Composable
     override fun Content() {
-        HomeScreen()
+        Navigator(HomeScreenMain()) { navigator ->
+            LaunchedEffect(navigator.lastItem){
+                onNavigator(navigator.lastItem is HomeScreenMain)
+            }
+            SlideTransition(navigator)
+        }
     }
 }
 
@@ -52,7 +59,7 @@ object SearchTab : Tab {
 
             return remember {
                 TabOptions(
-                    index = 0u,
+                    index = 1u,
                     title = title,
                     icon = icon
                 )
@@ -75,7 +82,7 @@ object AddTab : Tab {
 
             return remember {
                 TabOptions(
-                    index = 0u,
+                    index = 2u,
                     title = title,
                     icon = icon
                 )
@@ -98,7 +105,7 @@ object ReelsTab : Tab {
             val icon = painterResource("ic_reels_new.xml")
             return remember {
                 TabOptions(
-                    index = 0u,
+                    index = 3u,
                     title = title,
                     icon = icon
                 )
@@ -121,7 +128,7 @@ object ProfileTab : Tab {
 
             return remember {
                 TabOptions(
-                    index = 0u,
+                    index = 4u,
                     title = title,
                     icon = icon
                 )

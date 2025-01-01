@@ -73,11 +73,14 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.tabNavigator)
+            implementation(libs.voyager.transitions)
             implementation(libs.moko.mvvm.core)
             implementation(libs.moko.mvvm.compose)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.annotation)
+            implementation(libs.compose.adaptive)
+//            implementation(libs.compose.adaptive.layout)
             //implementation(libs.sql.delight)
             implementation(libs.sql.delight.coroutines)
         }
@@ -95,6 +98,8 @@ kotlin {
             implementation("uk.co.caprica:vlcj:4.7.0")
         }
     }
+
+    task("testClasses")
 }
 
 android {

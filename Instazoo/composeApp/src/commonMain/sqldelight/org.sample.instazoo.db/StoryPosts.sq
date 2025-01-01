@@ -1,12 +1,39 @@
-CREATE TABLE StoryItemEntity (
+CREATE TABLE user_stories (
+    user_id INTEGER NOT NULL PRIMARY KEY,
     user_name TEXT,
     user_profile_pic TEXT
 );
 
-selectAllStories:
-SELECT *
-FROM StoryItemEntity;
+CREATE TABLE story_items (
+    story_id INTEGER NOT NULL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    story_type TEXT,
+    url TEXT,
+    time TEXT,
+    FOREIGN KEY (user_id) REFERENCES user_stories(user_id) ON DELETE CASCADE
+);
+
+selectAllUserStories:
+SELECT user_stories.*, story_items.story_id, story_items.story_type, story_items.url, story_items.time
+FROM user_stories
+LEFT JOIN story_items ON user_stories.user_id = story_items.user_id;
+
+getMainStoriesList:
+SELECT user_stories.*
+FROM user_stories;
+
+getSingleUserStory:
+SELECT user_stories.*, story_items.*
+FROM user_stories
+LEFT JOIN story_items ON user_stories.user_id = story_items.user_id
+WHERE user_stories.user_id = ?;
+
+insertUserStories:
+INSERT INTO user_stories(user_id, user_name, user_profile_pic)
+VALUES (?,?,?);
 
 insertStoryItem:
-INSERT INTO StoryItemEntity(user_name, user_profile_pic)
-VALUES ?;
+INSERT INTO story_items (story_id, user_id, story_type, url, time) VALUES (?,?,?,?,?);
+
+getSingleUserStories:
+SELECT * FROM story_items WHERE user_id = ?;
