@@ -88,7 +88,7 @@ fun HomeScreen(homeViewModel: HomeScreenViewModel = koinInject()) {
     val scope = rememberCoroutineScope()
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+//    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val isExpanded = calculateWindowSizeClass().widthSizeClass == WindowWidthSizeClass.Expanded
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
